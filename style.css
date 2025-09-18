@@ -1,0 +1,74 @@
+:root {
+    --primary-color: #f19337;
+    --secondary-color: #3948e2;
+    --accent-color: #6ca16a;
+    --font-family: 'Arial', sans-serif;
+    --font-size: 16px;
+    --border-radius: 5px;
+}
+body {
+    height: 100%;
+    font-family: var(--font-family);
+    font-size: var(--font-size);
+    margin: 0;
+    padding: 0;
+    background-color: var(--primary-color);
+}
+.welcome-content, .about-us-content{
+    background-color: var(--primary-color);
+    padding: 2rem;
+    text-align: center;
+
+}
+.nav-container {
+    background-color: var(--accent-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+    color: white;
+    height: 70px;
+    margin: 0 auto;
+    
+}
+header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+header .buttons button {
+    margin-left: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--border-radius);
+    border: none;
+    cursor: pointer;
+}
+/* signup section */
+.footer-content{
+    background-color: var(--secondary-color);
+    color: white;
+    text-align: center;
+    padding: 1rem;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+.footer-content form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+
+}
+footer{
+    background-color: var(--secondary-color);
+    color: white;
+    text-align: center;
+    padding: 60px 0;
+}
+html {
+    scroll-behavior: smooth;
+    height: 100%;
+
+}
