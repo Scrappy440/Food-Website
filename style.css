@@ -29,7 +29,53 @@ body {
     color: white;
     height: 70px;
     margin: 0 auto;
-    
+}
+.navbar{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: var(--accent-color);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 1000;
+}
+.logo-text {
+    font-family: (--font-family);
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: white;
+}
+/* Buttons */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    margin-left: 1rem;
+    display: inline-block;
+}
+.btn-prim {
+    background: linear-gradient(135deg, #f19337, #ffae63);
+    color: white;
+    border: none;
+}
+.btn-prim:hover {
+   transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(241, 147, 55, 0.5);
+}
+
+.btn-sec {
+    background: transparent;
+    color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+}
+.btn-sec:hover {
+    background: var(--secondary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(57, 72, 226, 0.4);
 }
 header h1 {
     margin: 0;
