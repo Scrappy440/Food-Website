@@ -12,13 +12,15 @@ body {
     font-size: var(--font-size);
     margin: 0;
     padding: 0;
-    background-color: var(--primary-color);
+    background-color: #f4f4f4;
+    line-height: 1.6;
 }
+
+
 .welcome-content, .about-us-content{
     background-color: var(--primary-color);
-    padding: 2rem;
+    padding: 3rem;
     text-align: center;
-
 }
 .nav-container {
     background-color: var(--accent-color);
@@ -29,24 +31,27 @@ body {
     color: white;
     height: 70px;
     margin: 0 auto;
+    max-width: 900px;
 }
-.navbar{
-    position: fixed;
+.nav-bar{
+    position: sticky;
     top: 0;
     width: 100%;
     background: var(--accent-color);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    z-index: 1000;
+    z-index: 100;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    top: 0;
 }
 .logo-text {
     font-family: (--font-family);
     font-size: 1.5rem;
-    font-weight: 900;
+    font-weight: bold;
     color: white;
 }
 /* Buttons */
-.btn {
+.nav-buttons a {
     padding: 0.5rem 1rem;
     border-radius: 25px;
     font-weight: 600;
@@ -92,11 +97,11 @@ header .buttons button {
 .footer-content{
     background-color: var(--secondary-color);
     color: white;
-    text-align: center;
-    padding: 1rem;
-    position: relative;
+    padding: 2rem;
     bottom: 0;
-    width: 100%;
+    border-radius: 18px;
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
 }
 .footer-content form {
     display: flex;
@@ -111,7 +116,28 @@ footer{
     background-color: var(--secondary-color);
     color: white;
     text-align: center;
-    padding: 60px 0;
+    padding: 0 2.5rem;
+    margin: 0 auto;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
+}
+.footer-content input, .footer-content button {
+    padding: 0.75rem;
+    border: 1px solid #000000;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+.footer-content button{
+    background: transparent;
+    color: white;
+    border: 2px solid var(--primary-color);
+    font-weight: bolder;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 15px rgba(241, 147, 55, 0.4);
+}
+.footer-content button:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-2px);
 }
 html {
     scroll-behavior: smooth;
