@@ -23,30 +23,28 @@ body {
     text-align: center;
 }
 .nav-container {
-    background-color: var(--accent-color);
+    background-color: var(--secondary-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
     color: white;
     height: 70px;
-    margin: 0 auto;
-    max-width: 900px;
 }
 .nav-bar{
     position: sticky;
     top: 0;
     width: 100%;
-    background: var(--accent-color);
+    background: var(--secondary-color);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
     z-index: 100;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    top: 0;
 }
 .logo-text {
     font-family: (--font-family);
     font-size: 1.5rem;
+    padding-left: 0;
     font-weight: bold;
     color: white;
 }
@@ -73,8 +71,8 @@ body {
 
 .btn-sec {
     background: transparent;
-    color: var(--secondary-color);
-    border: 2px solid var(--secondary-color);
+    color: var(--accent-color);
+    border: 2px solid var(--accent-color);
 }
 .btn-sec:hover {
     background: var(--secondary-color);
@@ -143,4 +141,63 @@ html {
     scroll-behavior: smooth;
     height: 100%;
 
+}
+
+/* Start of home page styles */
+.home-page-content {
+    background-color: var(--accent-color);
+    text-align: center;
+    padding-bottom: 315px;
+}
+
+.home-nav-bar {
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background: var(--secondary-color);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    z-index: 100;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    top: 0;
+}
+
+.option-card {
+    display: inline-block;
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 1rem;
+    padding: 1rem;
+    width: 400px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.log-meal-pic {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius);
+}
+
+.meal-analysis-pic {
+    width: 100%;
+    height: 100%;
+    border-radius: var(--border-radius);
+}
+
+.home-welcome-message {
+    color: white;
+    padding: 2rem 0;
+}
+
+.option-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: var(--primary-color);
+    color: white;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
 }
