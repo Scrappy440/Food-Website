@@ -22,6 +22,14 @@
         <main class="login-content">
             <div class="login-box">
             <h1>Welcome Back!</h1>
+
+            <!-- Display error messages -->
+             
+             {% if error %}
+                <div class="error-message">{{ error }}</div>
+            {% endif %}
+            
+            
             <form id="login" name="login" action="{{ url_for('login') }}" method="post">
                 <div class="user-box">
                 <input type="email" name="email" placeholder="Email" required>

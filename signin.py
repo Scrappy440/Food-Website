@@ -31,8 +31,7 @@ def login():
         flash('Login successful!', 'success')
         return redirect(url_for('home'))
     else:
-        flash("Invalid credentials, try again.", 'error')
-        return redirect(url_for("login_page"))
+        return render_template("Login.html", error="Invalid email or password. Please try again.")
 
 @app.route("/signup", methods=['POST'])
 def signup():
