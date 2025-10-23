@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <nav>
@@ -13,7 +13,7 @@
             <div class="logo-text">BiteThat!</div>
             <div class="nav-buttons">
                 <a href="#sign-up" class="btn btn-prim">Sign Up</a>
-                <a href="Login.html" class="btn btn-sec">Log in</a>
+                <a href="{{ url_for('login_page') }}" class="btn btn-sec">Log in</a>
             </div>    
         </div>
     </nav>
@@ -31,7 +31,7 @@
     <footer>
         <section class="footer-content">
             <h2>Sign Up</h2>
-            <form id="sign-up" action="#" method="post">
+            <form id="sign-up" action="{{ url_for('signup') }}" method="post">
                 <input type="text" name="full-name" placeholder="Full Name" required>
                 <input type="email" name="email" placeholder="Email" required>
                 <input type="text" name="username" placeholder="Username" required>
