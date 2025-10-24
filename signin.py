@@ -7,10 +7,12 @@ app.secret_key = "keyHere"
 
 #10/15
 # Fake user database for demo, tie in real database later
-users = {
-    "testuser@example.com": "password123",
-    "admin@example.com": "admin"
-}
+#
+#users = {
+#    "testuser@example.com": "password123",
+#    "admin@example.com": "admin"
+#}
+
 # Connect with flask: 
 @app.route("/")
 def index():
@@ -64,3 +66,6 @@ def logout():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)
+
+#port number should not overwrite 
+#
