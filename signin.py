@@ -8,10 +8,11 @@ app.secret_key = "keyHere"
 #10/15
 # Fake user database for demo, tie in real database later
 #
-#users = {
-#    "testuser@example.com": "password123",
-#    "admin@example.com": "admin"
-#}
+
+#10/25 further testing, no users breaks site
+# removed admin account 
+users = {
+}
 
 # Connect with flask: 
 @app.route("/")
