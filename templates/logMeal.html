@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Meal - BiteThat!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="nav-bar">
+        <div class="nav-container">
+            <div class="logo-text">BiteThat!</div>
+            <div class="nav-buttons">
+                <a href="{{ url_for('home') }}" class="btn btn-home">Home</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-sec">Log out</a>
+            </div>
+        </div>
+    </nav>
+    
+    <main class="log-meal-page">
+        <div class="log-meal-wrapper">
+            <div class="page-header-simple">
+                <h1>Add Food</h1>
+                <p class="date-display" id="current-date"></p>
+            </div>
+            
+            <div class="meal-type-selector">
+                <button type="button" class="meal-type-btn active" data-meal="breakfast">Breakfast</button>
+                <button type="button" class="meal-type-btn" data-meal="lunch">Lunch</button>
+                <button type="button" class="meal-type-btn" data-meal="dinner">Dinner</button>
+                <button type="button" class="meal-type-btn" data-meal="snack">Snacks</button>
+            </div>
+            
+            <div class="food-search-section">
+                <input type="text" id="food-search" class="food-search-input" placeholder="Search for food...">
+                <button class="quick-add-btn" onclick="toggleQuickAdd()">+ Quick Add</button>
+            </div>
+            
+            <div id="quick-add-form" class="quick-add-form" style="display: none;">
+                <form action="{{ url_for('log_meal') }}" method="POST" id="meal-form">
+                    <input type="hidden" name="meal_type" id="selected-meal-type" value="breakfast">
+                    <input type="hidden" name="meal_date" id="meal-date">
+                    
+                    <div class="foods-list">
+                        <div class="food-item">
+                            <div class="food-item-header">
+                                <input type="text" name="ingredient_name[]" class="food-name-input" placeholder="Food name" required>
+                                <button type="button" class="remove-food-btn" onclick="this.closest('.food-item').remove(); updateTotals();">×</button>
+                            </div>
+                            <div class="nutrition-inputs">
+                                <div class="nutrition-input-group">
+                                    <label>Serving</label>
+                                    <input type="text" name="quantity[]" placeholder="1 cup">
+                                </div>
+                                <div class="nutrition-input-group">
+                                    <label>Calories</label>
+                                    <input type="number" name="calories[]" placeholder="0" min="0" onchange="updateTotals()">
+                                </div>
+                                <div class="nutrition-input-group">
+                                    <label>Protein (g)</label>
+                                    <input type="number" name="protein[]" placeholder="0" min="0" step="0.1" onchange="updateTotals()">
+                                </div>
+                                <div class="nutrition-input-group">
+                                    <label>Carbs (g)</label>
+                                    <input type="number" name="carbs[]" placeholder="0" min="0" step="0.1" onchange="updateTotals()">
+                                </div>
+                                <div class="nutrition-input-group">
+                                    <label>Fat (g)</label>
+                                    <input type="number" name="fat[]" placeholder="0" min="0" step="0.1" onchange="updateTotals()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button type="button" class="add-food-btn" onclick="addFood()">+ Add Another Food</button>
+                    
+                    <div class="meal-summary">
+                        <h3>Meal Totals</h3>
+                        <div class="totals-row">
+                            <div class="total-item">
+                                <span class="total-value" id="total-calories">0</span>
+                                <span class="total-label">Calories</span>
+                            </div>
+                            <div class="total-item">
+                                <span class="total-value" id="total-carbs">0g</span>
+                                <span class="total-label">Carbs</span>
+                            </div>
+                            <div class="total-item">
+                                <span class="total-value" id="total-fat">0g</span>
+                                <span class="total-label">Fat</span>
+                            </div>
+                            <div class="total-item">
+                                <span class="total-value" id="total-protein">0g</span>
+                                <span class="total-label">Protein</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="cancel-btn" onclick="toggleQuickAdd()">Cancel</button>
+                        <button type="submit" class="save-btn">Add to Diary</button>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="daily-summary">
+                <h2>Today's Summary</h2>
+                <div class="progress-bars">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span>Calories</span>
+                            <span class="progress-values"><strong>0</strong> / 2000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+                    <div class="macro-grid">
+                        <div class="macro-item">
+                            <span class="macro-label">Carbs</span>
+                            <span class="macro-value">0g</span>
+                        </div>
+                        <div class="macro-item">
+                            <span class="macro-label">Fat</span>
+                            <span class="macro-value">0g</span>
+                        </div>
+                        <div class="macro-item">
+                            <span class="macro-label">Protein</span>
+                            <span class="macro-value">0g</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

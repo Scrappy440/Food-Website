@@ -59,6 +59,14 @@ def home():
         return redirect(url_for('login_page'))
     return render_template('home.html', user=session['user'])
 
+@app.route('/log_meal')
+def log_meal():
+   return render_template('logMeal.html')
+
+@app.route('/meal_analysis')
+def meal_analysis():
+    return render_template('mealAnalysis.html')
+
 @app.route('/logout')
 def logout():
     session.pop('user', None)
