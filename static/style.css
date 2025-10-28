@@ -1,10 +1,20 @@
 :root {
-    --primary-color: #f19337;
-    --secondary-color: #3948e2;
-    --accent-color: #6ca16a;
-    --font-family: 'Arial', sans-serif;
+    --primary-color: #FF8C42;        
+    --secondary-color: #4A90E2;      
+    --accent-color: #5FAD56;         
+    --dark-text: #2C3E50;            
+    --medium-text: #7F8C8D;          
+    --light-bg: #F8F9FA;             
+    --white: #FFFFFF;                
+    --border-color: #E1E8ED;         
+    --error-color: #E74C3C;          
+    --warning-color: #F39C12;       
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     --font-size: 16px;
-    --border-radius: 5px;
+    --border-radius: 8px;
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
 body {
     height: 100%;
@@ -12,42 +22,52 @@ body {
     font-size: var(--font-size);
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    background-color: var(--light-bg);
     line-height: 1.6;
+    color: var(--dark-text);
 }
 
 
 .welcome-content, .about-us-content{
-    background-color: var(--primary-color);
+    background-color: var(--white);
     padding: 3rem;
     text-align: center;
+    color: var(--dark-text);
 }
+
+.welcome-content h1, .about-us-content h2 {
+    color: var(--primary-color);
+}
+
 .nav-container {
-    background-color: var(--secondary-color);
+    background-color: var(--white);
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0 20px;
-    color: white;
+    color: var(--dark-text);
     height: 70px;
 }
+
 .nav-bar{
     position: sticky;
     top: 0;
     width: 100%;
-    background: var(--secondary-color);
+    background: var(--white);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid var(--border-color);
     z-index: 100;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-sm);
 }
+
 .logo-text {
-    font-family: (--font-family);
+    font-family: var(--font-family);
     font-size: 1.5rem;
     padding-left: 0;
     font-weight: bold;
-    color: white;
+    color: var(--primary-color);
 }
+
 /* Buttons */
 .nav-buttons a {
     padding: 0.5rem 1rem;
@@ -59,47 +79,76 @@ body {
     margin-left: 1rem;
     display: inline-block;
 }
-/* Navbar sign-up button on sign-up page */
+
+/* Navbar buttons styling */
 .btn-prim {
-    background: linear-gradient(135deg, #f19337, #ffae63);
+    background: linear-gradient(135deg, var(--primary-color), #ff9a3c);
     color: white;
     border: none;
+    box-shadow: var(--shadow-sm);
 }
+
 .btn-prim:hover {
-   transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(241, 147, 55, 0.5);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
-/* Navbar sign-up button on log-in page */
 
 .btn-sign{
-    background: transparent;
-    color: white;
+    background: var(--white);
+    color: var(--primary-color);
     border: 2px solid var(--primary-color);
 }
+
 .btn-sign:hover {
-    color: white;
     background: var(--primary-color);
+    color: white;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(241, 147, 55, 0.5);
+    box-shadow: var(--shadow-sm);
 }
-/* Navbar login button on sign-up page */
 
 .btn-sec {
-    background: transparent;
+    background: var(--white);
+    color: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+}
+
+.btn-sec:hover {
+    background: var(--secondary-color);
     color: white;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-home {
+    background: var(--white);
+    color: var(--accent-color);
     border: 2px solid var(--accent-color);
 }
-.btn-sec:hover {
+
+.btn-home:hover {
     background: var(--accent-color);
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(57, 226, 79, 0.5);
-
+    box-shadow: var(--shadow-sm);
 }
+
+.btn-log {
+    background: linear-gradient(135deg, var(--accent-color), #4ca044);
+    color: white;
+    border: none;
+}
+
+.btn-log:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
 header h1 {
     margin: 0;
     font-size: 1.5rem;
+    color: var(--dark-text);
 }
+
 header .buttons button {
     margin-left: 1rem;
     padding: 0.5rem 1rem;
@@ -110,38 +159,34 @@ header .buttons button {
 
 /* Navbar login button on login page */
 
-.btn-log{
-    background: var(--accent-color);
-    color: white;
-    border: 2px solid var(--accent-color);
-}
-.btn-log:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(57, 226, 79, 0.5);
-}
 
 .btn-acc {
-    background: rgba(255, 255, 255, 0.161);
+    background: rgba(74, 144, 226, 0.1);
     color: var(--secondary-color);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid var(--secondary-color);
     border-radius: 50px;
     padding: 0.7rem 1.2rem;
     font-weight: 600;
-    backdrop-filter: blur(10px);
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
 }
 
 .btn-acc:hover {
-    background: rgba(255, 255, 255, 0.957);
-    box-shadow: 0 8px 20px rgba(57, 72, 226, 0.4);
+    background: var(--secondary-color);
+    color: white;
+    box-shadow: var(--shadow-md);
     transform: translateY(-2px);
 }
+
+.btn-acc:before {
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
 header h1 {
     margin: 0;
     font-size: 1.5rem;
 }
+
 header .buttons button {
     margin-left: 1rem;
     padding: 0.5rem 1rem;
@@ -151,71 +196,125 @@ header .buttons button {
 }
 
 /* login section */
-
 .login-content {
-    background-color: var(--accent-color);
+    background-color: var(--secondary-color);
     padding: 2rem;
     text-align: center;
-     min-height: calc(100vh - 70px); /* Full height minus nav */
-
+    min-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
    
 .login-content h1{
-    margin-top: 40px;
-    font-size: 35px;}
-.login-box {
-    position: fixed;
-    text-align: center;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    z-index: 1000;
-    width: 350px;
-    max-width: 90vw;
-    height: 400px;
+    margin-top: 0;
+    font-size: 2rem;
+    color: var(--dark-text);
 }
+
+.login-box {
+    text-align: center;
+    background: white;
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: var(--shadow-lg);
+    width: 400px;
+    max-width: 90vw;
+}
+
 .login-content form {
     display: flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-
+    gap: 1rem;
+    margin-top: 1.5rem;
 }
+
 .user-box {
     display: flex;
-    font-size: 4rem;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
-    gap: 0.8rem;
+    gap: 1rem;
     text-align: center;
     width: 100%;
-    padding-top:50px;
 }
+
 .login-content input, .login-content button {
     padding: 0.7rem;
     border-radius: var(--border-radius);
     font-size: 1rem;
     border: 1px solid #000000;
 }
+
 .login-content button {
     background: transparent;
     color: black;
     border: 2px solid var(--primary-color);
     font-weight: bolder;
     cursor: pointer;
-    margin-top : 10px;
+    margin-top: 10px;
     transition: background-color 0.3s ease;
     box-shadow: 0 4px 15px rgba(241, 147, 55, 0.4);
 }
 
 .login-content button:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.error-message {
+    background-color: rgba(231, 76, 60, 0.1);
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
+    padding: 0.75rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1rem;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* Footer/Signup Section */
+.footer-content {
+    background-color: var(--secondary-color);
+    color: white;
+    text-align: center;
+    padding: 3rem 1rem;
+}
+
+.footer-content h2 {
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.footer-content form {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.footer-content input, .footer-content button {
+    padding: 0.75rem;
+    border: 1px solid #000000;
+    border-radius: var(--border-radius);
+    font-size: 1rem;
+}
+
+.footer-content button{
+    background: transparent;
+    color: white;
+    border: 2px solid var(--primary-color);
+    font-weight: bolder;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 15px rgba(241, 147, 55, 0.4);
+}
+
+.footer-content button:hover {
     background-color: var(--primary-color);
     transform: translateY(-2px);
 }
@@ -286,7 +385,7 @@ html {
 }
 
 
-/* Start of home page styles */
+/* Home page styles */
 .home-page-content {
     background-color: var(--accent-color);
     text-align: center;
@@ -333,14 +432,409 @@ html {
     padding: 2rem 0;
 }
 
+/* log meal and meal analysis buttons on home page */
+
 .option-btn {
     display: inline-block;
     margin-top: 1rem;
     padding: 0.5rem 1rem;
-    background: var(--primary-color);
-    color: white;
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: black;
     border-radius: var(--border-radius);
     text-decoration: none;
     font-weight: bold;
     transition: background-color 0.3s ease;
+}
+
+.option-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(241, 147, 55, 0.5);
+}
+
+/* Log meal page styles */
+
+.log-meal-page {
+    background: #f5f7fa;
+    min-height: calc(100vh - 70px);
+    padding: 2rem 1rem;
+}
+
+.log-meal-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.page-header-simple {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.page-header-simple h1 {
+    color: #2c3e50;
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.date-display {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+/* Meal Type Selector */
+.meal-type-selector {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+    background: white;
+    padding: 0.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.meal-type-btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid transparent;
+    background: white;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #7f8c8d;
+}
+
+.meal-type-btn.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.meal-type-btn:hover:not(.active) {
+    background: #f8f9fa;
+    color: var(--primary-color);
+}
+
+/* Food Search Section */
+.food-search-section {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.food-search-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    border: 2px solid #e8e8e8;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.food-search-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.quick-add-btn {
+    padding: 1rem 2rem;
+    background: var(--accent-color);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.quick-add-btn:hover {
+    background: #5a8f58;
+    transform: translateY(-2px);
+}
+
+/* Quick Add Form */
+.quick-add-form {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.foods-list {
+    margin-bottom: 1.5rem;
+}
+
+.food-item {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #e8e8e8;
+}
+
+.food-item-header {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.food-name-input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.food-name-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.remove-food-btn {
+    width: 36px;
+    height: 36px;
+    background: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.remove-food-btn:hover {
+    background: #c0392b;
+    transform: scale(1.05);
+}
+
+.nutrition-inputs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.nutrition-input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.nutrition-input-group label {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin-bottom: 0.4rem;
+    font-weight: 600;
+}
+
+.nutrition-input-group input {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+}
+
+.nutrition-input-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.add-food-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: white;
+    color: var(--accent-color);
+    border: 2px dashed var(--accent-color);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.add-food-btn:hover {
+    background: var(--accent-color);
+    color: white;
+    border-style: solid;
+}
+
+/* Meal Summary */
+.meal-summary {
+    background: linear-gradient(135deg, var(--accent-color), #5a8f58);
+    padding: 1.5rem;
+    border-radius: 10px;
+    color: white;
+    margin-bottom: 1.5rem;
+}
+
+.meal-summary h3 {
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.totals-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+}
+
+.total-item {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.total-value {
+    display: block;
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.total-label {
+    display: block;
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+}
+
+.cancel-btn, .save-btn {
+    flex: 1;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-btn {
+    background: #ecf0f1;
+    color: #7f8c8d;
+}
+
+.cancel-btn:hover {
+    background: #d5dbdb;
+}
+
+.save-btn {
+    background: linear-gradient(135deg, var(--primary-color), #ff9a3c);
+    color: white;
+    box-shadow: 0 4px 12px rgba(241, 147, 55, 0.3);
+}
+
+.save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(241, 147, 55, 0.4);
+}
+
+/* Daily Summary */
+.daily-summary {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.daily-summary h2 {
+    color: #2c3e50;
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem;
+}
+
+.progress-item {
+    margin-bottom: 1.5rem;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.progress-values {
+    color: #7f8c8d;
+}
+
+.progress-bar {
+    height: 12px;
+    background: #ecf0f1;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), #ff9a3c);
+    transition: width 0.5s ease;
+}
+
+.macro-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.macro-item {
+    text-align: center;
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+}
+
+.macro-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+}
+
+.macro-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .meal-type-selector {
+        flex-direction: column;
+    }
+    
+    .food-search-section {
+        flex-direction: column;
+    }
+    
+    .nutrition-inputs {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .totals-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .macro-grid {
+        grid-template-columns: 1fr;
+    }
 }

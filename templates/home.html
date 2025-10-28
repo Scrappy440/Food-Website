@@ -23,11 +23,11 @@
             <section class="options">
                 <div class="option-card">
                     <img src="{{ url_for('static', filename='TableWithFood.jpg') }}" class="log-meal-pic">
-                    <a href="#" class="option-btn">Log Meals</a>
+                    <a href="{{ url_for('log_meal') }}" class="option-btn">Log Meals</a>
                 </div>
                 <div class="option-card">
                     <img src="{{ url_for('static', filename='mealAnalysis.jpg') }}" class="log-meal-pic">
-                    <a href="#" class="option-btn">Meal Analysis</a>
+                    <a href="{{ url_for('meal_analysis') }}" class="option-btn">Meal Analysis</a>
                 </div>
             </section>
         </section>
