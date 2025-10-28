@@ -67,6 +67,10 @@ def log_meal():
 def meal_analysis():
     return render_template('mealAnalysis.html')
 
+@app.route('/log_physical_state')
+def log_physical_state():
+    return render_template('logPhysicalState.html') 
+
 @app.route('/logout')
 def logout():
     session.pop('user', None)

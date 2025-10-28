@@ -26,9 +26,13 @@
                     <a href="{{ url_for('log_meal') }}" class="option-btn">Log Meals</a>
                 </div>
                 <div class="option-card">
+                    <img src="{{ url_for('static', filename='log_physicalState.jpg') }}" class="log-meal-pic">
+                    <a href="{{ url_for('log_physical_state') }}" class="option-btn">Log Physical State</a>
+                </div>
+                <div class="option-card">
                     <img src="{{ url_for('static', filename='mealAnalysis.jpg') }}" class="log-meal-pic">
                     <a href="{{ url_for('meal_analysis') }}" class="option-btn">Meal Analysis</a>
-                </div>
+                </div>  
             </section>
         </section>
     </header>
