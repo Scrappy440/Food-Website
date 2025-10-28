@@ -2,8 +2,17 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 #No pygame, flask moving forward, easiest to communicate with SQL such as PostgreSQL
 #flask version 25.1.1, used cmd: pip install flask
 # 10/19 added "sessions" above
+import os, sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 app = Flask(__name__)
 app.secret_key = "keyHere" 
+
+DB_PATH = os.path.abspath("bitethat.db")
+def get_db():
+    con = sqlite3.connect(DB_PATH)
+    con.row_factory = sqlite3.Row
+    con.execute("PRAGMA foreign_keys = ON;")
+    return con
 
 #10/15
 # Fake user database for demo, tie in real database later
@@ -29,7 +38,11 @@ def login():
     email = request.form.get('email')
     password = request.form.get('password')
 
-    if email in users and users[email] == password:
+    con = get_db()
+    row = con.execute("SELECT id, email, display_name, hashed_password FROM users WHERE email=?", (email,)).fetchone()
+    con.close()
+
+    if row and check_password_hash(row['hashed_password'], password):
         session['user'] = email
         flash('Login successful!', 'success')
         return redirect(url_for('home'))
@@ -43,13 +56,18 @@ def signup():
     username = request.form.get('username')
     password = request.form.get('password')
     
-    # Basic validation
-    if email in users:
+    con = get_db()
+    exists = con.execute("SELECT 1 FROM users WHERE email=?", (email,)).fetchone()
+    if exists:
+        con.close()
         flash("User already exists!", 'error')
         return redirect(url_for('index'))
     
-    # Add user to "database"
-    users[email] = password
+    pw_hash = generate_password_hash(password)
+    con.execute("INSERT INTO users(email, display_name, hashed_password) VALUES (?,?,?)", (email, full_name, pw_hash))
+    con.commit()
+    con.close()
+
     flash('Account created successfully! Please log in.', 'success')
     return redirect(url_for('login_page'))
 
