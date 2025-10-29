@@ -5,12 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 <body>
     <nav>
         <nav class="nav-bar">
         <div class="nav-container">
-            <div class="logo-text">BiteThat!</div>
+            <div class="logo-text">
+                <i class="fas fa-utensils"></i>
+                <span>BiteThat!</span>
+            </div>
+                
             <div class="nav-buttons">
                 <a href="#sign-up" class="btn btn-prim">Sign Up</a>
                 <a href="{{ url_for('login_page') }}" class="btn btn-sec">Log in</a>
@@ -18,26 +24,80 @@
         </div>
     </nav>
     <header>
-        <section class="welcome-content">
-            <h1>Welcome to BiteThat!</h1>
-            <p>Your go-to platform for delicious recipes and food inspiration.</p>
+           <section class="hero">
+            <div class="hero-container">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Welcome to <span class="highlight">BiteThat!</span>
+                    </h1>
+                    <p class="hero-tagline">
+                        Track Your Food & Understand Your Body
+                    </p>
+                    <p class="hero-description">
+                        Discover how your meals affect your wellbeing. Get personalized insights 
+                        and nutrition tracking to feel your best every day.
+                    </p>
+                    <a href="#sign-up" class="btn btn-hero">Get Started</a>
+                </div>
+            </div>
         </section>
-        <section class="about-us-content">
-            <h2>About Us</h2>
-            <p>Founded in 2025, BiteThat! has been on a mission to provide users with detailed information about the food they consume, to better understand their dietary needs.</p>
-            <p>We believe that everyone deserves to have access to a user-friendly space where they can explore and learn about nutrition, recipes, and healthy eating habits.</p>
+
+        <section class="mission-content">
+            <h2>Our Mission</h2>
+            <p>We help you understand how food affects your body and mind. Track your meals, feelings, and discover what works best for you.</p>
+            
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-utensils"></i>
+                    <h3>Log Meals</h3>
+                    <p>Record what you eat throughout the day</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-heart"></i>
+                    <h3>Log Feelings</h3>
+                    <p>Track your mood and energy levels</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Discover Patterns</h3>
+                    <p>See how food impacts how you feel</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-lightbulb"></i>
+                    <h3>Get Recommendations</h3>
+                    <p>Receive personalized nutrition insights</p>
+                </div>
+            </div>
         </section>
     </header>
     <footer>
-        <section class="footer-content">
-            <h2>Sign Up</h2>
-            <form id="sign-up" action="{{ url_for('signup') }}" method="post">
-                <input type="text" name="full-name" placeholder="Full Name" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Sign Up!</button>
-            </form>
+        <section class="signup-section" id="sign-up">
+            <div class="signup-container">
+                <div class="signup-header">
+                    <h2>Sign Up</h2>
+                    <p>Discover how food affects your wellbeing today!</p>
+                </div>
+                <form class="signup-form" action="{{ url_for('signup') }}" method="post">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <input type="text" name="full-name" placeholder="Full Name" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="email" name="email" placeholder="Email Address" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <input type="text" name="username" placeholder="Username" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="password" name="password" placeholder="Password" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="signup-submit-btn">Create Your Account</button>
+                    <p class="signup-footer-text">Already have an account? <a href="{{ url_for('login_page') }}">Log in</a></p>
+                </form>
+            </div>
         </section>
     </footer>    
 </body>

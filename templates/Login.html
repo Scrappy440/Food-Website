@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 </head>
 <body>
      <nav>
         <nav class="nav-bar">
             <div class="nav-container">
-                <div class="logo-text">BiteThat!</div>
+                <div class="logo-text">
+                <i class="fas fa-utensils"></i>
+                <span>BiteThat!</span>
+            </div>
                 <div class="nav-buttons">
                     <a href="{{ url_for('index') }}" class="btn btn-sign">Sign Up</a>
                     <a href="{{ url_for('login_page') }}" class="btn btn-log">Log in</a>
