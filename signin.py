@@ -68,6 +68,7 @@ def signup():
     con.commit()
     con.close()
 
+
     flash('Account created successfully! Please log in.', 'success')
     return redirect(url_for('login_page'))
 
@@ -75,7 +76,9 @@ def signup():
 def home():
     if 'user' not in session:
         return redirect(url_for('login_page'))
-    return render_template('home.html', user=session['user'])
+ 
+    user_name = session.get('user_name', 'User')
+    return render_template('home.html', user_name=user_name)
 
 @app.route('/log_meal', methods=['GET', 'POST'])
 def log_meal():

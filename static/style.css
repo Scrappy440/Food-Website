@@ -16,6 +16,11 @@
     --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
+
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     height: 100%;
     font-family: var(--font-family);
@@ -27,20 +32,131 @@ body {
     color: var(--dark-text);
 }
 
+/* Hero Section */
+.hero {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, var(--secondary-color) 0%,  rgb(129, 183, 228) 100%);
+    color: white;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
 
-.welcome-content, .about-us-content{
-    background-color: var(--white);
-    padding: 3rem;
+.hero-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.hero-text {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    color: white;
+}
+
+.highlight {
+    background: linear-gradient(45deg, #FFD93D, var(--primary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+}
+
+.hero-tagline {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 2rem;
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.welcome-content, .mission-content {
+    background-color: #f5f7f9;
+    padding: 4rem 2rem;
     text-align: center;
     color: var(--dark-text);
 }
 
-.welcome-content h1, .about-us-content h2 {
+.welcome-content h1, .mission-content h2 {
     color: var(--primary-color);
+    margin-bottom: 1rem;
+    font-size: 2.2rem;
+}
+
+.mission-content > p {
+    max-width: 750px;
+    margin: 0 auto 3.5rem;
+    font-size: 1.15rem;
+    color: var(--medium-text);
+    line-height: 1.6;
+}
+
+/* Features Grid */
+.features {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(200px, 1fr));
+    gap: 2.5rem;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+@media (max-width: 768px) {
+    .features {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.feature {
+    text-align: center;
+    padding: 1.5rem 1rem;
+}
+
+.feature i {
+    font-size: 3.2rem;
+    color: var(--accent-color);
+    margin-bottom: 1.2rem;
+}
+
+.feature h3 {
+    color: var(--dark-text);
+    font-size: 1.25rem;
+    margin-bottom: 0.6rem;
+    font-weight: 600;
+}
+
+.feature p {
+    color: var(--medium-text);
+    font-size: 1rem;
+    line-height: 1.5;
+    margin: 0;
 }
 
 .nav-container {
-    background-color: var(--white);
+    background-color: rgba(255, 255, 255, 0.7);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -53,7 +169,6 @@ body {
     position: sticky;
     top: 0;
     width: 100%;
-    background: var(--white);
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
     z-index: 100;
@@ -62,10 +177,16 @@ body {
 
 .logo-text {
     font-family: var(--font-family);
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     padding-left: 0;
     font-weight: bold;
+    color: rgb(20, 46, 82);
+}
+
+.logo-text i {
     color: var(--primary-color);
+    font-size: 1.8rem;
+    margin-right: .5rem;
 }
 
 /* Buttons */
@@ -141,6 +262,28 @@ body {
 .btn-log:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* Hero section button */
+.btn-hero {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    margin-top: 2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--secondary-color);
+    background: white;
+    border: 2px solid white;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-md);
+}
+
+.btn-hero:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    background: var(--light-bg);
 }
 
 header h1 {
@@ -275,73 +418,141 @@ header .buttons button {
     font-weight: 500;
 }
 
-/* Footer/Signup Section */
-.footer-content {
-    background-color: var(--secondary-color);
-    color: white;
-    text-align: center;
-    padding: 3rem 1rem;
+/* Signup Section */
+footer {
+    background: linear-gradient(135deg, var(--secondary-color) 0%, #5a8ec7 100%);
+    padding: 4rem 2rem;
 }
 
-.footer-content h2 {
-    color: white;
+.signup-section {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.signup-container {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.signup-header h2 {
+    color: var(--dark-text);
+    font-size: 2.2rem;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+}
+
+.signup-header p {
+    color: var(--medium-text);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.signup-form {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
     margin-bottom: 1.5rem;
 }
 
-.footer-content form {
+.input-group {
     display: flex;
-    justify-content: center;
     flex-direction: column;
-    align-items: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
 }
 
-.footer-content input, .footer-content button {
-    padding: 0.75rem;
-    border: 1px solid #000000;
-    border-radius: var(--border-radius);
+.input-group input {
+    padding: 1rem 1.25rem;
+    border: 2px solid #e8e8e8;
+    border-radius: 10px;
     font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: var(--font-family);
 }
 
-.footer-content button{
-    background: transparent;
+.input-group input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(95, 173, 86, 0.1);
+}
+
+.signup-submit-btn {
+    width: 100%;
+    padding: 1.1rem 2rem;
+    background: linear-gradient(135deg, var(--primary-color), #ff9a3c);
     color: white;
-    border: 2px solid var(--primary-color);
-    font-weight: bolder;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    box-shadow: 0 4px 15px rgba(241, 147, 55, 0.4);
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(241, 147, 55, 0.3);
+    margin-top: 0.5rem;
 }
 
-.footer-content button:hover {
-    background-color: var(--primary-color);
+.signup-submit-btn:hover {
     transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(241, 147, 55, 0.4);
 }
 
-/* Error message styling */
-.error-message {
-    background-color: rgba(255, 107, 107, 0.1);
-    border: 1px solid #ff6b6b;
-    color: #ff6b6b;
-    padding: 0.75rem;
-    border-radius: 8px;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
+.signup-footer-text {
     text-align: center;
-    font-weight: 500;
+    color: var(--medium-text);
+    font-size: 0.95rem;
+    margin-top: 1.5rem;
+    margin-bottom: 0;
 }
 
-/* signup section */
-.footer-content{
+.signup-footer-text a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.signup-footer-text a:hover {
+    color: var(--primary-color);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .signup-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .signup-header h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Old footer content styles - keep for other pages that still use the old format */
+.footer-content {
     background-color: var(--secondary-color);
     color: white;
     padding: 2rem;
-    bottom: 0;
+    text-align: center;
     border-radius: 18px;
     max-width: 600px;
     margin: 0 auto 2rem auto;
 }
+
 .footer-content form {
     display: flex;
     justify-content: center;
@@ -349,23 +560,16 @@ header .buttons button {
     align-items: center;
     gap: 0.5rem;
     margin-top: 1rem;
+}
 
-}
-footer{
-    background-color: var(--secondary-color);
-    color: white;
-    text-align: center;
-    padding: 0 2.5rem;
-    margin: 0 auto;
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.1);
-}
 .footer-content input, .footer-content button {
     padding: 0.75rem;
     border: 1px solid #000000;
     border-radius: var(--border-radius);
     font-size: 1rem;
 }
-.footer-content button{
+
+.footer-content button {
     background: transparent;
     color: white;
     border: 2px solid var(--primary-color);
@@ -374,16 +578,16 @@ footer{
     transition: background-color 0.3s ease;
     box-shadow: 0 4px 15px rgba(241, 147, 55, 0.4);
 }
+
 .footer-content button:hover {
     background-color: var(--primary-color);
     transform: translateY(-2px);
 }
+
 html {
     scroll-behavior: smooth;
     height: 100%;
-
 }
-
 
 /* Home page styles */
 .home-page-content {
