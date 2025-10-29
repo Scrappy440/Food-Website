@@ -77,10 +77,24 @@ def home():
         return redirect(url_for('login_page'))
     return render_template('home.html', user=session['user'])
 
-@app.route('/log_meal')
+@app.route('/log_meal', methods=['GET', 'POST'])
 def log_meal():
-   return render_template('logMeal.html')
+    if request.method == 'POST':
+        #  save the meal log to the database
+        meal_type = request.form.get('meal-type')
+        meal_date = request.form.get('meal-date')
 
+        ingredient_names = request.form.getlist('ingredient-name[]')
+        quantities = request.form.getlist('quantity[]')
+        calories_list = request.form.getlist('calories[]')
+        protein_list = request.form.getlist('protein[]')
+        carbs_list = request.form.getlist('carbs[]')
+        fat_list = request.form.getlist('fat[]')
+
+        return redirect(url_for('log_meal'))
+    return render_template('logMeal.html')
+
+     
 @app.route('/meal_analysis')
 def meal_analysis():
     return render_template('mealAnalysis.html')
