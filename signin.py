@@ -1,3 +1,4 @@
+'''
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 #No pygame, flask moving forward, easiest to communicate with SQL such as PostgreSQL
 #flask version 25.1.1, used cmd: pip install flask
@@ -26,7 +27,6 @@ users = {
 # Connect with flask: 
 @app.route("/")
 def index():
-    print("Index route accessed")  # Debug
     return render_template("index.html")
 
 @app.route("/login_page")
@@ -117,3 +117,4 @@ if __name__ == "__main__":
 
 #port number should not overwrite 
 #
+'''

@@ -35,12 +35,20 @@
                 <button type="button" class="meal-type-btn" data-meal="dinner">Dinner</button>
                 <button type="button" class="meal-type-btn" data-meal="snack">Snacks</button>
             </div>
-            
-            <div class="food-search-section">
+            <!-- Updated for autocomplete feature 11/10
                 <input type="text" id="food-search" class="food-search-input" placeholder="Search for food...">
                 <button class="quick-add-btn" onclick="toggleQuickAdd()">+ Quick Add</button>
             </div>
-            
+             -->
+            <div class="food-search-section">
+                <div class="autocomplete-wrapper">
+                    <input type="text" id="food-search" class="food-search-input" placeholder="Search for food...">
+                    <div id="autocomplete-results" class="autocomplete-results"></div>
+                </div>
+                <button class="quick-add-btn" onclick="toggleQuickAdd()">+ Quick Add</button>
+            </div>
+
+
             <div id="quick-add-form" class="quick-add-form" style="display: none;">
                 <form action="{{ url_for('log_meal') }}" method="POST" id="meal-form">
                     <input type="hidden" name="meal_type" id="selected-meal-type" value="breakfast">
@@ -140,5 +148,67 @@
     </main>
     
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+<!--Autosuggest Didnt work, needs new script maybe 11/9-->
+<!-- I hate Javascript -Y  -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const searchInput = document.getElementById("food-search");
+        const resultsDiv = document.getElementById("autocomplete-results");
+        async function searchFoods(query) {
+        const res = await fetch(`/autocomplete?query=${encodeURIComponent(query)}`);
+        return res.json();
+    }
+
+    async function getFoodDetails(id) {
+        const res = await fetch(`/food/${id}`);
+        return res.json();
+    }
+    //Decision: Starts auto after 2 chars
+    searchInput.addEventListener("input", async () => {
+        const query = searchInput.value.trim();
+        resultsDiv.innerHTML = "";
+        if (query.length < 2) return;
+
+        const foods = await searchFoods(query);
+        foods.forEach(f => {
+            const div = document.createElement("div");
+            div.className = "suggestion";
+            div.textContent = f.brand ? `${f.name} (${f.brand})` : f.name;
+            div.onclick = async () => {
+                // Fill the top search box with chosen name (NOT working only suggests under)
+                searchInput.value = f.name;
+                resultsDiv.innerHTML = "";
+
+                const data = await getFoodDetails(f.id);
+                if (data.error) return alert("Food not found.");
+
+                // Autofill button
+                const firstFood = document.querySelector(".food-item");
+                if (firstFood) {
+                    firstFood.querySelector(".food-name-input").value = data.name;
+                    firstFood.querySelector("input[name='quantity[]']").value =
+                        data.serving_size_g ? `${data.serving_size_g} g` : "";
+                    firstFood.querySelector("input[name='calories[]']").value = data.kcal ?? 0;
+                    //firstFood.querySelector("input[name='calories[]']").value = data.cal ?? 0;
+                    firstFood.querySelector("input[name='protein[]']").value = data.protein_g ?? 0;
+                    firstFood.querySelector("input[name='carbs[]']").value = data.carbs_g ?? 0;
+                    firstFood.querySelector("input[name='fat[]']").value = data.fat_g ?? 0;
+                    updateTotals();
+                }
+            };
+            resultsDiv.appendChild(div);
+        });
+    });
+
+    // Hide autocomplete when not cliked on
+    document.addEventListener("click", e => {
+        if (!resultsDiv.contains(e.target) && e.target !== searchInput) {
+            resultsDiv.innerHTML = "";
+        }
+    });
+});
+</script>
+
 </body>
 </html>
