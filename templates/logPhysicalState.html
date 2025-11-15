@@ -3,23 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Log Physical State - BiteThat!</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
 <body>
-        <nav class="nav-bar">
+    <nav class="nav-bar">
         <div class="nav-container">
             <div class="logo-text">
                 <i class="fas fa-utensils"></i>
                 <span>BiteThat!</span>
             </div>
             <div class="nav-buttons">
-                <a href="{{ url_for('home') }}" class="btn btn-sign">Home</a>
+                <a href="{{ url_for('home') }}" class="btn btn-home">Home</a>
                 <a href="{{ url_for('logout') }}" class="btn btn-sec">Log out</a>
-            </div>    
+            </div>
         </div>
-    
+    </nav>
+
+    <main class="log-feeling-page">
+        <div class="container-main">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1>How Are You Feeling Today?</h1>
+                <p>Track your physical state throughout the day to discover patterns</p>
+            </div>
+
+            <!-- Log Form -->
+            <div class="log-form-card">
+                <div class="form-header">
+                    <i class="fas fa-heart-pulse"></i>
+                    <h2>Add New Entry</h2>
+                </div>
+
+                <form id="feelingForm" class="feeling-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="time-input">
+                                <i class="fas fa-clock"></i>
+                                Time
+                            </label>
+                            <div class="time-input-wrapper">
+                                <input type="time" id="time-input" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group selected-feelings-group">
+                            <label>
+                                <i class="fas fa-heart"></i>
+                                Selected Feelings
+                            </label>
+                            <div class="selected-feelings-container" id="selectedFeelings">
+                                <span class="empty-message">Click feelings below to add them</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="feelings-selection-area">
+                        <label class="section-label">
+                            <i class="fas fa-hand-pointer"></i>
+                            Choose How You Feel (Click to add)
+                        </label>
+                        
+                        <div class="feeling-category">
+                            <h4>Energy</h4>
+                            <div class="feeling-options">
+                                <button type="button" class="feeling-option" data-feeling="Energized">Energized</button>
+                                <button type="button" class="feeling-option" data-feeling="Alert">Alert</button>
+                                <button type="button" class="feeling-option" data-feeling="Normal Energy">Normal Energy</button>
+                                <button type="button" class="feeling-option" data-feeling="Tired">Tired</button>
+                                <button type="button" class="feeling-option" data-feeling="Exhausted">Exhausted</button>
+                            </div>
+                        </div>
+
+                        <div class="feeling-category">
+                            <h4>Digestion</h4>
+                            <div class="feeling-options">
+                                <button type="button" class="feeling-option" data-feeling="Comfortable">Comfortable</button>
+                                <button type="button" class="feeling-option" data-feeling="Bloated">Bloated</button>
+                                <button type="button" class="feeling-option" data-feeling="Gassy">Gassy</button>
+                                <button type="button" class="feeling-option" data-feeling="Nauseous">Nauseous</button>
+                                <button type="button" class="feeling-option" data-feeling="Stomach Ache">Stomach Ache</button>
+                                <button type="button" class="feeling-option" data-feeling="Heartburn">Heartburn</button>
+                                <button type="button" class="feeling-option" data-feeling="Cramping">Cramping</button>
+                            </div>
+                        </div>
+
+                        <div class="feeling-category">
+                            <h4>Mood</h4>
+                            <div class="feeling-options">
+                                <button type="button" class="feeling-option" data-feeling="Happy">Happy</button>
+                                <button type="button" class="feeling-option" data-feeling="Calm">Calm</button>
+                                <button type="button" class="feeling-option" data-feeling="Focused">Focused</button>
+                                <button type="button" class="feeling-option" data-feeling="Anxious">Anxious</button>
+                                <button type="button" class="feeling-option" data-feeling="Irritable">Irritable</button>
+                                <button type="button" class="feeling-option" data-feeling="Stressed">Stressed</button>
+                                <button type="button" class="feeling-option" data-feeling="Depressed">Depressed</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="add-entry-btn">
+                        <i class="fas fa-plus-circle"></i>
+                        <span>Add Entry</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Entries Display -->
+            <div class="entries-section">
+                <div class="entries-header">
+                    <div class="header-left">
+                        <i class="fas fa-calendar-day"></i>
+                        <h2>Today's Entries</h2>
+                        <span class="entry-count" id="entryCount">0 entries</span>
+                    </div>
+                    <button class="clear-all-btn" id="clearAllBtn" disabled>
+                        <i class="fas fa-trash"></i>
+                        Clear All
+                    </button>
+                </div>
+
+                <div class="entries-grid" id="entriesGrid">
+                    <!-- Empty state -->
+                    <div class="empty-state" id="emptyState">
+                        <i class="fas fa-inbox"></i>
+                        <h3>No entries yet</h3>
+                        <p>Add your first feeling entry above to get started</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
