@@ -104,8 +104,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     const firstFood = document.querySelector(".food-item");
                     if (firstFood) {
                         firstFood.querySelector(".food-name-input").value = data.name;
-                        firstFood.querySelector("input[name='quantity[]']").value =
-                            data.serving_size_g ? `${data.serving_size_g} g` : "";
+                        // Set quantity to 1 (meaning 1 serving), not the serving size in grams
+                        firstFood.querySelector("input[name='quantity[]']").value = "1";
                         firstFood.querySelector("input[name='calories[]']").value = data.kcal ?? 0;
                         firstFood.querySelector("input[name='protein[]']").value = data.protein_g ?? 0;
                         firstFood.querySelector("input[name='carbs[]']").value = data.carbs_g ?? 0;
