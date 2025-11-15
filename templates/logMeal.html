@@ -122,24 +122,122 @@
                     <div class="progress-item">
                         <div class="progress-header">
                             <span>Calories</span>
-                            <span class="progress-values"><strong>0</strong> / 2000</span>
+                            <span class="progress-values"><strong id="daily-calories">{{ totals.kcal|round(0)|int }}</strong> / <span id="daily-goal">2000</span></span>
                         </div>
                         <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%"></div>
+                            <div id="daily-progress-fill" class="progress-fill" style="width: {% if totals.kcal %}{{ (totals.kcal / 2000 * 100)|round(1) }}%{% else %}0%{% endif %}"></div>
                         </div>
                     </div>
                     <div class="macro-grid">
                         <div class="macro-item">
                             <span class="macro-label">Carbs</span>
-                            <span class="macro-value">0g</span>
+                            <span id="daily-carbs" class="macro-value">{{ totals.carbs|round(1) }}g</span>
                         </div>
                         <div class="macro-item">
                             <span class="macro-label">Fat</span>
-                            <span class="macro-value">0g</span>
+                            <span id="daily-fat" class="macro-value">{{ totals.fat|round(1) }}g</span>
                         </div>
                         <div class="macro-item">
                             <span class="macro-label">Protein</span>
-                            <span class="macro-value">0g</span>
+                            <span id="daily-protein" class="macro-value">{{ totals.protein|round(1) }}g</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- After quick adding meals, show 4 category-specific diary cards -->
+            <div class="diary-section">
+                <h2>Meal Diary</h2>
+                <div class="diary-grid">
+                    <div class="diary-column">
+                        <h4><i class="fas fa-coffee"></i> Breakfast</h4>
+                        <div id="diary-breakfast" class="diary-list">
+                            {% for meal in meals_by_type.get('breakfast', []) %}
+                            <div class="diary-meal" data-meal-id="{{ meal.id }}">
+                                <div class="diary-meal-header">
+                                    <h5>{{ meal.meal_date.strftime('%m/%d') }}</h5>
+                                    <div class="meal-actions">
+                                        <button type="button" class="edit-meal-btn" data-meal-id="{{ meal.id }}" title="Edit"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="delete-meal-btn" data-meal-id="{{ meal.id }}" title="Delete"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <ul class="food-items-list">
+                                    {% for item in meal['items'] %}
+                                    <li class="food-item-entry">
+                                        <span class="food-name">{{ item.ingredient_name }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="diary-column">
+                        <h4><i class="fas fa-utensils"></i> Lunch</h4>
+                        <div id="diary-lunch" class="diary-list">
+                            {% for meal in meals_by_type.get('lunch', []) %}
+                            <div class="diary-meal" data-meal-id="{{ meal.id }}">
+                                <div class="diary-meal-header">
+                                    <h5>{{ meal.meal_date.strftime('%m/%d') }}</h5>
+                                    <div class="meal-actions">
+                                        <button type="button" class="edit-meal-btn" data-meal-id="{{ meal.id }}" title="Edit"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="delete-meal-btn" data-meal-id="{{ meal.id }}" title="Delete"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <ul class="food-items-list">
+                                    {% for item in meal['items'] %}
+                                    <li class="food-item-entry">
+                                        <span class="food-name">{{ item.ingredient_name }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="diary-column">
+                        <h4><i class="fas fa-drumstick-bite"></i> Dinner</h4>
+                        <div id="diary-dinner" class="diary-list">
+                            {% for meal in meals_by_type.get('dinner', []) %}
+                            <div class="diary-meal" data-meal-id="{{ meal.id }}">
+                                <div class="diary-meal-header">
+                                    <h5>{{ meal.meal_date.strftime('%m/%d') }}</h5>
+                                    <div class="meal-actions">
+                                        <button type="button" class="edit-meal-btn" data-meal-id="{{ meal.id }}" title="Edit"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="delete-meal-btn" data-meal-id="{{ meal.id }}" title="Delete"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <ul class="food-items-list">
+                                    {% for item in meal['items'] %}
+                                    <li class="food-item-entry">
+                                        <span class="food-name">{{ item.ingredient_name }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="diary-column">
+                        <h4><i class="fas fa-cookie-bite"></i> Snacks</h4>
+                        <div id="diary-snack" class="diary-list">
+                            {% for meal in meals_by_type.get('snack', []) %}
+                            <div class="diary-meal" data-meal-id="{{ meal.id }}">
+                                <div class="diary-meal-header">
+                                    <h5>{{ meal.meal_date.strftime('%m/%d') }}</h5>
+                                    <div class="meal-actions">
+                                        <button type="button" class="edit-meal-btn" data-meal-id="{{ meal.id }}" title="Edit"><i class="fas fa-edit"></i></button>
+                                        <button type="button" class="delete-meal-btn" data-meal-id="{{ meal.id }}" title="Delete"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <ul class="food-items-list">
+                                    {% for item in meal['items'] %}
+                                    <li class="food-item-entry">
+                                        <span class="food-name">{{ item.ingredient_name }}</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
@@ -209,6 +307,257 @@
     });
 });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  // set today's date into hidden input
+  const mealDate = document.getElementById('meal-date');
+  if (mealDate && !mealDate.value) mealDate.value = new Date().toISOString().slice(0,10);
 
+  // wire meal-type buttons to hidden input
+  document.querySelectorAll('.meal-type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.getElementById('selected-meal-type').value = btn.dataset.meal;
+      document.querySelectorAll('.meal-type-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+
+  const mealForm = document.getElementById('meal-form');
+  const defaultMealFormAction = mealForm ? mealForm.action : '/logmeal';
+  let currentlyEditingId = null;
+  
+  if (!mealForm) return;
+
+  mealForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(mealForm);
+    try {
+      const res = await fetch(mealForm.action, { method: 'POST', body: fd, headers: {'X-Requested-With':'XMLHttpRequest'} });
+      const data = await res.json();
+      if (!data.success) return alert(data.error || 'Failed to save meal.');
+
+      // append meal to category-specific diary
+      const m = data.meal;
+      const cat = (m.meal_type || 'snack').toLowerCase();
+      const containerList = document.getElementById(`diary-${cat}`) || document.getElementById('diary-snack');
+      const existing = document.querySelector(`[data-meal-id="${m.id}"]`);
+      
+      if (existing) {
+        // On edit, just reload - server will recalculate everything
+        window.location.reload();
+      } else {
+        // For new meals, add to UI and update totals
+        const container = createMealCard(m);
+        containerList.insertBefore(container, containerList.firstChild);
+        if (m.totals) {
+          updateDailySummary(m.totals);
+        }
+      }
+
+      // clear editing state
+      clearEditState();
+
+      mealForm.reset();
+      mealForm.action = defaultMealFormAction;
+      document.querySelector('.save-btn').textContent = 'Add to Diary';
+      document.querySelector('.meal-type-btn[data-meal="breakfast"]')?.click();
+      mealDate.value = new Date().toISOString().slice(0,10);
+      
+      // close quick add form
+      const quickAdd = document.getElementById('quick-add-form');
+      if (quickAdd) quickAdd.style.display = 'none';
+    } catch (err) {
+      alert('Error saving meal: ' + err.message);
+    }
+  });
+
+  function createMealCard(m) {
+    const container = document.createElement('div');
+    container.className = 'diary-meal';
+    container.dataset.mealId = m.id;
+    
+    const header = document.createElement('div');
+    header.className = 'diary-meal-header';
+    
+    const h = document.createElement('h5');
+    // Parse date string as local date (YYYY-MM-DD)
+    const dateStr = m.meal_date.split('T')[0]; // Get just the date part
+    const [year, month, day] = dateStr.split('-');
+    h.textContent = `${month.padStart(2,'0')}/${day.padStart(2,'0')}`;
+    
+    const actions = document.createElement('div');
+    actions.className = 'meal-actions';
+    actions.innerHTML = `
+      <button type="button" class="edit-meal-btn" data-meal-id="${m.id}" title="Edit"><i class="fas fa-edit"></i></button>
+      <button type="button" class="delete-meal-btn" data-meal-id="${m.id}" title="Delete"><i class="fas fa-trash"></i></button>
+    `;
+    
+    header.appendChild(h);
+    header.appendChild(actions);
+    container.appendChild(header);
+    
+    const ul = document.createElement('ul');
+    ul.className = 'food-items-list';
+    (m.items||[]).forEach(it => {
+      const li = document.createElement('li');
+      li.className = 'food-item-entry';
+      li.innerHTML = `<span class="food-name">${escapeHtml(it.ingredient_name)}</span>`;
+      ul.appendChild(li);
+    });
+    container.appendChild(ul);
+    
+    return container;
+  }
+
+  function updateDailySummary(totals) {
+    const kcalEl = document.getElementById('daily-calories');
+    const carbsEl = document.getElementById('daily-carbs');
+    const fatEl = document.getElementById('daily-fat');
+    const protEl = document.getElementById('daily-protein');
+    const progressFill = document.getElementById('daily-progress-fill');
+    const goal = parseFloat(document.getElementById('daily-goal').textContent) || 2000;
+    
+    // Ensure all values are numbers
+    const currentKcal = parseFloat(kcalEl.textContent) || 0;
+    const newKcal = parseFloat(totals.kcal) || 0;
+    
+    // Add new meal totals to current values
+    if (kcalEl) kcalEl.textContent = Math.round(currentKcal + newKcal);
+    
+    if (carbsEl) {
+      const currentCarbs = parseFloat(carbsEl.textContent) || 0;
+      const newCarbs = parseFloat(totals.carbs) || 0;
+      carbsEl.textContent = (currentCarbs + newCarbs).toFixed(1) + 'g';
+    }
+    if (fatEl) {
+      const currentFat = parseFloat(fatEl.textContent) || 0;
+      const newFat = parseFloat(totals.fat) || 0;
+      fatEl.textContent = (currentFat + newFat).toFixed(1) + 'g';
+    }
+    if (protEl) {
+      const currentProt = parseFloat(protEl.textContent) || 0;
+      const newProt = parseFloat(totals.protein) || 0;
+      protEl.textContent = (currentProt + newProt).toFixed(1) + 'g';
+    }
+    
+    if (progressFill && kcalEl) {
+      const pct = Math.min(100, (parseFloat(kcalEl.textContent) / goal) * 100);
+      progressFill.style.width = pct + '%';
+    }
+  }
+
+  function clearEditState() {
+    const formWrap = document.getElementById('quick-add-form');
+    if (formWrap) formWrap.classList.remove('editing');
+    if (currentlyEditingId) {
+      const prev = document.querySelector(`[data-meal-id="${currentlyEditingId}"]`);
+      if (prev) prev.classList.remove('editing');
+    }
+    currentlyEditingId = null;
+    if (mealForm) mealForm.action = defaultMealFormAction;
+    const saveBtn = document.querySelector('.save-btn');
+    if (saveBtn) saveBtn.textContent = 'Add to Diary';
+  }
+
+  function escapeHtml(s) {
+    return String(s||'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  // handle clicks on edit/delete buttons (delegated)
+  document.addEventListener('click', async (e) => {
+    // Edit button
+    const editBtn = e.target.closest('.edit-meal-btn');
+    if (editBtn) {
+      const mealId = editBtn.dataset.mealId;
+      if (!mealId) return;
+      try {
+        const res = await fetch(`/meal/${mealId}`);
+        const data = await res.json();
+        if (!data.success) return alert(data.error || 'Failed to load meal');
+        openMealInEditor(data.meal);
+      } catch (err) {
+        alert('Error fetching meal: ' + err.message);
+      }
+      return;
+    }
+    
+    // Delete button
+    const deleteBtn = e.target.closest('.delete-meal-btn');
+    if (deleteBtn) {
+      const mealId = deleteBtn.dataset.mealId;
+      if (!mealId) return;
+      if (!confirm('Are you sure you want to delete this meal?')) return;
+      try {
+        const res = await fetch(`/meal/${mealId}/delete`, { method: 'POST', headers: {'X-Requested-With':'XMLHttpRequest'} });
+        const data = await res.json();
+        if (!data.success) return alert(data.error || 'Failed to delete meal');
+        
+        // remove from UI
+        const card = document.querySelector(`[data-meal-id="${mealId}"]`);
+        if (card) card.remove();
+        
+        // refresh page to update totals (or compute locally if you have the meal data)
+        window.location.reload();
+      } catch (err) {
+        alert('Error deleting meal: ' + err.message);
+      }
+      return;
+    }
+  });
+
+  function clearFoodsList() {
+    const foodsList = document.querySelector('.foods-list');
+    foodsList.innerHTML = '';
+  }
+
+  function addFoodItemToForm(item) {
+    addFood(); // uses script.js addFood to append a blank item
+    const last = document.querySelectorAll('.food-item');
+    const el = last[last.length - 1];
+    if (!el) return;
+    el.querySelector('.food-name-input').value = item.ingredient_name || '';
+    el.querySelector("input[name='quantity[]']").value = item.quantity || '';
+    el.querySelector("input[name='calories[]']").value = item.calories || 0;
+    el.querySelector("input[name='protein[]']").value = item.protein || 0;
+    el.querySelector("input[name='carbs[]']").value = item.carbs || 0;
+    el.querySelector("input[name='fat[]']").value = item.fat || 0;
+  }
+
+  function openMealInEditor(meal) {
+    const form = document.getElementById('quick-add-form');
+    if (form.style.display === 'none') toggleQuickAdd();
+    
+    mealForm.action = `/meal/${meal.id}/update`;
+    form.classList.add('editing');
+    
+    const entry = document.querySelector(`[data-meal-id="${meal.id}"]`);
+    if (entry) {
+      if (currentlyEditingId && currentlyEditingId !== meal.id) {
+        const prev = document.querySelector(`[data-meal-id="${currentlyEditingId}"]`);
+        if (prev) prev.classList.remove('editing');
+      }
+      entry.classList.add('editing');
+    }
+    currentlyEditingId = meal.id;
+    
+    document.getElementById('selected-meal-type').value = meal.meal_type || '';
+    document.getElementById('meal-date').value = meal.meal_date ? meal.meal_date.split('T')[0] : new Date().toISOString().slice(0,10);
+    
+    clearFoodsList();
+    (meal.items || []).forEach(it => addFoodItemToForm(it));
+    updateTotals();
+    
+    document.querySelector('.save-btn').textContent = 'Save Changes';
+  }
+
+  // wire cancel button
+  const cancelBtn = document.querySelector('.cancel-btn');
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', () => {
+      clearEditState();
+    });
+  }
+});
+</script>
 </body>
 </html>
