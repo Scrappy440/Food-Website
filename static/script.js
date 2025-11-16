@@ -133,18 +133,54 @@ function toggleQuickAdd() {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Date navigation for meal logging
+    let currentDate = new Date();
+    currentDate.setHours(0, 0, 0, 0);
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+    
     const dateInput = document.getElementById('meal-date');
-    if (dateInput) {
-        const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        dateInput.value = now.toISOString().slice(0, 16);
-    }
-
     const dateDisplay = document.getElementById('current-date');
-    if (dateDisplay) {
-        const today = new Date();
+    const prevDateBtn = document.getElementById('prev-date-btn');
+    const nextDateBtn = document.getElementById('next-date-btn');
+    
+    if (dateInput && dateDisplay) {
+        // Initialize with today's date
+        updateDateDisplay();
+        
+        // Previous date button
+        if (prevDateBtn) {
+            prevDateBtn.addEventListener('click', function() {
+                currentDate.setDate(currentDate.getDate() - 1);
+                updateDateDisplay();
+            });
+        }
+        
+        // Next date button
+        if (nextDateBtn) {
+            nextDateBtn.addEventListener('click', function() {
+                // Move forward one day
+                currentDate.setDate(currentDate.getDate() + 1);
+                updateDateDisplay();
+            });
+        }
+    }
+    
+    function updateDateDisplay() {
+        // Update display text
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-        dateDisplay.textContent = today.toLocaleDateString('en-US', options);
+        dateDisplay.textContent = currentDate.toLocaleDateString('en-US', options);
+        
+        // Update hidden input
+        const dateForInput = new Date(currentDate);
+        dateForInput.setMinutes(dateForInput.getMinutes() - dateForInput.getTimezoneOffset());
+        dateInput.value = dateForInput.toISOString().slice(0, 16);
+        
+        // Enable/disable next button based on whether we're at today
+        if (nextDateBtn) {
+            nextDateBtn.disabled = currentDate.getTime() >= today.getTime();
+        }
     }
 
     document.querySelectorAll('.meal-type-btn').forEach(btn => {

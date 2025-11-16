@@ -26,7 +26,15 @@
         <div class="log-meal-wrapper">
             <div class="page-header-simple">
                 <h1>Add Food</h1>
-                <p class="date-display" id="current-date"></p>
+                <div class="date-navigation">
+                    <button type="button" class="date-nav-btn" id="prev-date-btn">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <p class="date-display" id="current-date"></p>
+                    <button type="button" class="date-nav-btn" id="next-date-btn" disabled>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
             </div>
             
             <div class="meal-type-selector">
