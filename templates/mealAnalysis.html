@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Meal Analysis - BiteThat!</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
 </head>
-<nav>
+<body>
     <nav class="nav-bar">
         <div class="nav-container">
             <div class="logo-text">
@@ -22,8 +21,79 @@
             </div>
         </div>
     </nav>
-</nav>
-<body>
-    
+
+    <div class="container">
+        <div class="page-header">
+            <h1><i class="fas fa-chart-line"></i> Meal Analysis</h1>
+            <p>Discover which foods work best for you based on how you feel after eating them</p>
+        </div>
+
+        <div class="analysis-grid">
+            <!-- Good Foods Card -->
+            <div class="analysis-card good-foods-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-thumbs-up"></i> Foods That Work Well For You</h2>
+                    <p>Keep enjoying these!</p>
+                </div>
+                <div class="card-content">
+                    <div class="empty-state">
+                        <i class="fas fa-info-circle"></i>
+                        <p>No data yet! Log your meals and track how you feel to see personalized recommendations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bad Foods Card -->
+            <div class="analysis-card bad-foods-card">
+                <div class="card-header">
+                    <h2><i class="fas fa-exclamation-triangle"></i> Foods to Limit or Avoid</h2>
+                    <p>These may not agree with you</p>
+                </div>
+                <div class="card-content">
+                    <div class="empty-state">
+                        <i class="fas fa-info-circle"></i>
+                        <p>No data yet! Log your meals and track how you feel to see personalized recommendations.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recommended Meals Section -->
+        <div class="recommended-meals-section">
+            <div class="section-header">
+                <h2><i class="fas fa-lightbulb"></i> Recommended Meals For You</h2>
+                <p>Meal ideas based on foods that work well for your body</p>
+            </div>
+
+            <div class="meals-grid">
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <h3><i class="fas fa-coffee"></i> Breakfast</h3>
+                    </div>
+                    <div class="meal-content">
+                        <p class="empty-meal-state">Recommendations will appear here based on your data</p>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <h3><i class="fas fa-utensils"></i> Lunch</h3>
+                    </div>
+                    <div class="meal-content">
+                        <p class="empty-meal-state">Recommendations will appear here based on your data</p>
+                    </div>
+                </div>
+
+                <div class="meal-card">
+                    <div class="meal-header">
+                        <h3><i class="fas fa-drumstick-bite"></i> Dinner</h3>
+                    </div>
+                    <div class="meal-content">
+                        <p class="empty-meal-state">Recommendations will appear here based on your data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
