@@ -7,12 +7,14 @@
 
 #Flask the GOAT with Jsonify() 
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
-import sqlite3, os, datetime
+import sqlite3, os, datetime, json, urllib.request, urllib.error
 from werkzeug.security import generate_password_hash, check_password_hash
+from dotenv import load_dotenv
+load_dotenv()
+
 
 app = Flask(__name__)
 app.secret_key = "keyHere"
-
 DB_PATH = os.path.abspath("bitethat.db")
 
 # 11/8
@@ -295,8 +297,76 @@ def autocomplete():
         {"id": row["id"], "name": row["name"], "brand": row["brand"]}
         for row in cur.fetchall()
     ]
+    # Optionally query USDA FoodData Central API if API key is configured
+    api_key = os.environ.get('USDA_FDC_API_KEY')
+    if api_key:
+        try:
+            # POST search (pageSize 10)
+            url = f"https://api.nal.usda.gov/fdc/v1/foods/search?api_key={api_key}"
+            payload = json.dumps({"query": query, "pageSize": 10}).encode('utf-8')
+            req = urllib.request.Request(url, data=payload, headers={"Content-Type": "application/json"}, method='POST')
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                body = resp.read().decode('utf-8')
+                data = json.loads(body)
+                for f in data.get('foods', []):
+                    # create an id string to identify USDA results
+                    fid = f.get('fdcId')
+                    name = f.get('description') or f.get('lowercaseDescription') or ''
+                    brand = f.get('brandOwner') or ''
+                    results.append({"id": f"usda:{fid}", "name": name, "brand": brand, "fdc_id": fid})
+        except Exception:
+            # If USDA API fails, just ignore and return local results
+            pass
+
     conn.close()
     return jsonify(results)
+
+
+@app.route('/food/usda/<int:fdc_id>')
+def get_food_usda(fdc_id: int):
+    """Fetch USDA food details from FoodData Central (requires USDA_FDC_API_KEY env var).
+    Returns a JSON object with mapped nutrients where possible.
+    """
+    api_key = os.environ.get('USDA_FDC_API_KEY')
+    if not api_key:
+        return jsonify({"error": "USDA API key not configured"}), 400
+    try:
+        url = f"https://api.nal.usda.gov/fdc/v1/food/{fdc_id}?api_key={api_key}"
+        req = urllib.request.Request(url, method='GET')
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            body = resp.read().decode('utf-8')
+            data = json.loads(body)
+
+        # Map common nutrients by nutrient number where available
+        # Nutrient numbers: 1008 = Energy (kcal), 1003 = Protein (g), 1005 = Carbohydrate (g), 1004 = Total lipid (fat) (g)
+        nutrient_map = {1008: 'kcal', 1003: 'protein_g', 1005: 'carbs_g', 1004: 'fat_g'}
+        mapped = {'name': data.get('description'), 'brand': data.get('brandOwner')}
+        # some FDC responses include 'foodNutrients'
+        for n in data.get('foodNutrients', []) or []:
+            num = n.get('nutrient', {}).get('number') if isinstance(n.get('nutrient'), dict) else n.get('nutrientNumber')
+            # fallback to 'nutrientNumber' or 'nutrientId'
+            try:
+                num = int(num)
+            except Exception:
+                num = None
+            val = n.get('amount') or n.get('value')
+            if num and val is not None and num in nutrient_map:
+                mapped[nutrient_map[num]] = float(val)
+
+        # Some endpoints provide labelNutrients or nutrition data differently; try fallback keys
+        # return mapped with defaults
+        for k in ('kcal', 'protein_g', 'carbs_g', 'fat_g'):
+            mapped.setdefault(k, 0.0)
+
+        return jsonify(mapped)
+    except urllib.error.HTTPError as e:
+        try:
+            body = e.read().decode('utf-8')
+            return jsonify({'error': 'USDA API error', 'details': json.loads(body)}), 500
+        except Exception:
+            return jsonify({'error': 'USDA API HTTP error'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 @app.route("/food/<int:food_id>")
 def get_food(food_id):
