@@ -16,7 +16,7 @@ data/usda/- USDA  food information CSVs
 The USDA CSVs are too large to commit to GitHub.
 
 1. Download the USDA data bundle from:  
-   https://drive.google.com/file/d/1PlCqakyt_MqD4L1jccvlWhoWzHB9Xc1i/view?usp=drive_link
+   https://drive.google.com/drive/folders/1H0qGAVjMaYuXPPw0UbSINt4hLukssy9j?usp=drive_link
 
 2. Unzip into:
    Food-Website/
