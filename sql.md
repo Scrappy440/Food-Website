@@ -26,3 +26,15 @@ INSERT INTO users(email, display_name, hashed_password) VALUES (?,?,?);
 
 -- optional prefs
 INSERT OR IGNORE INTO user_prefs(user_id, region, unit_system) VALUES (?, 'US', 'metric');
+
+### Log Meal Feelings
+
+**Table**: `feelings(meal_id, user_id, recorded_at, mood, energy, bloating, nausea, notes)`
+
+Typical insert when the user rates how they felt after a meal:
+
+```sql
+INSERT INTO feelings
+    (meal_id, user_id, recorded_at, mood, energy, bloating, nausea, notes)
+VALUES
+    (?, ?, datetime('now'), ?, ?, ?, ?, ?);

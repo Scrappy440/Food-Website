@@ -168,8 +168,3 @@ CREATE INDEX IF NOT EXISTS idx_meal_items_food   ON meal_items(food_id);
 CREATE INDEX IF NOT EXISTS idx_meals_user_time   ON meals(user_id, eaten_at DESC);
 CREATE INDEX IF NOT EXISTS idx_feelings_meal     ON feelings(meal_id);
 CREATE INDEX IF NOT EXISTS idx_foods_name_lower  ON foods(LOWER(name));
-
-CREATE INDEX IF NOT EXISTS idx_user_food_agg     ON v_user_food_agg(user_id, food_id);
-CREATE INDEX IF NOT EXISTS idx_global_food_agg   ON v_global_food_agg(food_id);
-CREATE INDEX IF NOT EXISTS idx_user_pair_agg     ON v_user_pair_agg(user_id, food_a, food_b);
-CREATE INDEX IF NOT EXISTS idx_user_food_health  ON v_user_food_health(user_id, personalized_score DESC);
