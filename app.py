@@ -16,6 +16,33 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = "keyHere"
 DB_PATH = os.path.abspath("bitethat.db")
+def ensure_db_initialized():
+    """Ensure core tables exist; if not, run schema+pattern SQL."""
+    if not os.path.exists(DB_PATH):
+        print("[DB] bitethat.db missing, creating and initializing…")
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    conn.execute("PRAGMA foreign_keys = ON;")
+
+    # Check if 'users' table exists as a simple proxy
+    row = conn.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='users'"
+    ).fetchone()
+    if row:
+        conn.close()
+        return  
+    print("[DB] Applying schema.sql and pattern_analysis.sql…")
+    for fname in ("schema.sql", "pattern_analysis.sql"):
+        if os.path.exists(fname):
+            with open(fname, "r", encoding="utf-8") as f:
+                conn.executescript(f.read())
+        else:
+            print(f"[DB] Warning: {fname} not found, skipped.")
+
+    conn.commit()
+    conn.close()
+    print("[DB] Initialization complete.")
+
 
 # 11/8
 #https://pytutorial.com/python-sqlite3-database-connection-guide/
@@ -543,6 +570,78 @@ def delete_meal(meal_id):
     except Exception as e:
         conn.rollback()
         return jsonify(success=False, error=str(e)), 500
+    
+@app.route("/api/log_feelings", methods=["POST"])
+def api_log_feelings():
+    """
+    Save how the user felt after a specific meal.
+    Expects JSON like:
+    {
+      "meal_id": 123,
+      "mood": 7,
+      "energy": 8,
+      "bloating": 2,
+      "nausea": 0,
+      "notes": "felt good but a bit sleepy"
+    }
+    """
+    if "user" not in session:
+        return jsonify(success=False, error="Not authenticated"), 401
+
+    data = request.get_json(silent=True) or {}
+    meal_id = data.get("meal_id")
+    mood = data.get("mood")
+    energy = data.get("energy")
+    bloating = data.get("bloating")
+    nausea = data.get("nausea")
+    notes = data.get("notes")
+
+    if not meal_id:
+        return jsonify(success=False, error="meal_id is required"), 400
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # Look up current user
+    user_email = session.get("user")
+    user_row = cur.execute(
+        "SELECT id FROM users WHERE email = ?",
+        (user_email,)
+    ).fetchone()
+    if not user_row:
+        conn.close()
+        return jsonify(success=False, error="User not found"), 400
+    user_id = user_row["id"]
+
+    # Optional: ensure the meal belongs to this user
+    meal_row = cur.execute(
+        "SELECT id, user_id FROM meals WHERE id = ?",
+        (meal_id,)
+    ).fetchone()
+    if not meal_row or meal_row["user_id"] != user_id:
+        conn.close()
+        return jsonify(success=False, error="Meal not found or access denied"), 404
+
+    try:
+        # Insert a feelings row. If you only want one per meal, you could later
+        # add a UNIQUE constraint and switch this to INSERT OR REPLACE.
+        cur.execute(
+            """
+            INSERT INTO feelings
+                (meal_id, user_id, recorded_at, mood, energy, bloating, nausea, notes)
+            VALUES
+                (?, ?, datetime('now'), ?, ?, ?, ?, ?)
+            """,
+            (meal_id, user_id, mood, energy, bloating, nausea, notes),
+        )
+        conn.commit()
+        conn.close()
+        return jsonify(success=True)
+    except Exception as e:
+        conn.rollback()
+        conn.close()
+        return jsonify(success=False, error=str(e)), 500
+
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

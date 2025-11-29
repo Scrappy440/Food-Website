@@ -98,8 +98,8 @@ JOIN feelings fl ON fl.meal_id = m.id
 GROUP BY f.id;
 
 
-CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
-CREATE INDEX IF NOT EXISTS idx_meals_user ON meals(user_id, eaten_at DESC);
-CREATE INDEX IF NOT EXISTS idx_items_meal ON meal_items(meal_id);
-CREATE INDEX IF NOT EXISTS idx_items_food ON meal_items(food_id);
-CREATE INDEX IF NOT EXISTS idx_foods_name ON foods(name);
+--CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+--REATE INDEX IF NOT EXISTS idx_meals_user ON meals(user_id, eaten_at DESC);
+--CREATE INDEX IF NOT EXISTS idx_items_meal ON meal_items(meal_id);
+--CREATE INDEX IF NOT EXISTS idx_items_food ON meal_items(food_id);
+--CREATE INDEX IF NOT EXISTS idx_foods_name ON foods(name);
