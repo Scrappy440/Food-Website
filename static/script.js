@@ -74,6 +74,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         async function getFoodDetails(id) {
+            if (typeof id === 'string' && id.startsWith('usda:')) {
+                const fdc = id.split(':')[1];
+                const res = await fetch(`/food/usda/${fdc}`);
+                return res.json();
+            }
             const res = await fetch(`/food/${id}`);
             return res.json();
         }

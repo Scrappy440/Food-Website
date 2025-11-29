@@ -281,10 +281,7 @@ def autocomplete():
         return jsonify([])
     
     conn = get_db()  #COnect database
-    #Notes: I think Coca cola should appear as CC and not soda. 
-    # Kellog instead of cereal. Or like Oreos. Instead of "cookie" because 
-    # the db has that info already
-
+ 
 #If i want the first non Null then
 #https://www.w3schools.com/SQL/func_sqlserver_coalesce.asp
     cur = conn.cursor() 
@@ -337,14 +334,14 @@ def get_food_usda(fdc_id: int):
             body = resp.read().decode('utf-8')
             data = json.loads(body)
 
-        # Map common nutrients by nutrient number where available
-        # Nutrient numbers: 1008 = Energy (kcal), 1003 = Protein (g), 1005 = Carbohydrate (g), 1004 = Total lipid (fat) (g)
-        nutrient_map = {1008: 'kcal', 1003: 'protein_g', 1005: 'carbs_g', 1004: 'fat_g'}
+        # DEBUG: Print the raw USDA API response to the server log
+        print("\n--- USDA API RAW RESPONSE ---\n", body[:2000], "\n--- END USDA API RAW RESPONSE ---\n")
+
+        # Map common nutrients by nutrient number where available (USDA: 208=kcal, 203=protein, 205=carbs, 204=fat)
+        nutrient_map = {208: 'kcal', 203: 'protein_g', 205: 'carbs_g', 204: 'fat_g'}
         mapped = {'name': data.get('description'), 'brand': data.get('brandOwner')}
-        # some FDC responses include 'foodNutrients'
         for n in data.get('foodNutrients', []) or []:
             num = n.get('nutrient', {}).get('number') if isinstance(n.get('nutrient'), dict) else n.get('nutrientNumber')
-            # fallback to 'nutrientNumber' or 'nutrientId'
             try:
                 num = int(num)
             except Exception:
@@ -353,10 +350,11 @@ def get_food_usda(fdc_id: int):
             if num and val is not None and num in nutrient_map:
                 mapped[nutrient_map[num]] = float(val)
 
-        # Some endpoints provide labelNutrients or nutrition data differently; try fallback keys
-        # return mapped with defaults
         for k in ('kcal', 'protein_g', 'carbs_g', 'fat_g'):
-            mapped.setdefault(k, 0.0)
+            try:
+                mapped[k] = float(mapped.get(k, 0) or 0)
+            except Exception:
+                mapped[k] = 0.0
 
         return jsonify(mapped)
     except urllib.error.HTTPError as e:
@@ -380,7 +378,14 @@ def get_food(food_id):
     conn.close()
     if not row:
         return jsonify({"error": "Food not found"}), 404
-    return jsonify(dict(row))
+    # Always return all fields, defaulting to 0 if missing
+    d = dict(row)
+    for k in ('kcal', 'protein_g', 'carbs_g', 'fat_g'):
+        try:
+            d[k] = float(d.get(k, 0) or 0)
+        except Exception:
+            d[k] = 0.0
+    return jsonify(d)
 
 # MEAL analysis 
 
