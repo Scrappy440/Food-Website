@@ -418,16 +418,268 @@ def get_food(food_id):
 
 @app.route("/meal_analysis")
 def meal_analysis():
-    if 'user' not in session:
-        return redirect(url_for('login_page'))
-    return render_template('mealAnalysis.html')
+    if "user" not in session:
+        return redirect(url_for("login_page"))
+
+    conn = get_db()
+    cur = conn.cursor()
+    user_email = session.get("user")
+    user_row = cur.execute(
+        "SELECT id FROM users WHERE email = ?",
+        (user_email,)
+    ).fetchone()
+
+    if not user_row:
+        conn.close()
+        flash("User not found", "error")
+        return redirect(url_for("login_page"))
+
+    user_id = user_row["id"]
+
+    # 1) Foods that work well for this user (high personalized_score)
+    good_foods = cur.execute(
+        """
+        SELECT f.name,
+               uf.personalized_score,
+               uf.n_meals
+        FROM v_user_food_health uf
+        JOIN foods f ON f.id = uf.food_id
+        WHERE uf.user_id = ?
+          AND uf.personalized_score >= 5.0      -- only clearly positive foods
+        ORDER BY uf.personalized_score DESC
+        LIMIT 6;
+        """,
+        (user_id,)
+    ).fetchall()
+
+    # 2) Foods to limit (low personalized_score)
+    bad_foods = cur.execute(
+        """
+        SELECT f.name,
+               uf.personalized_score,
+               uf.n_meals
+        FROM v_user_food_health uf
+        JOIN foods f ON f.id = uf.food_id
+        WHERE uf.user_id = ?
+          AND uf.personalized_score <= -2.0     -- only clearly negative foods
+        ORDER BY uf.personalized_score ASC
+        LIMIT 6;
+        """,
+        (user_id,)
+    ).fetchall()
+
+    # 3) Recent meals (we'll score them in Python)
+    recent_rows = cur.execute(
+        """
+        SELECT
+            m.id,
+            m.title,
+            m.eaten_at,
+            v.kcal,
+            v.protein_g,
+            v.carbs_g,
+            v.sugar_g,
+            v.fat_g,
+            v.fiber_g,
+            fl.mood,
+            fl.energy,
+            fl.bloating,
+            fl.nausea
+        FROM meals m
+        JOIN v_meal_nutrition v ON v.meal_id = m.id
+        LEFT JOIN feelings fl    ON fl.meal_id = m.id
+        WHERE m.user_id = ?
+        ORDER BY m.eaten_at DESC
+        LIMIT 50;
+        """,
+        (user_id,)
+    ).fetchall()
+
+    # Helper to clamp numbers safely
+    def clamp(val, max_val):
+        try:
+            v = float(val or 0)
+        except Exception:
+            v = 0.0
+        return min(v, max_val)
+
+    recent_meals = []
+    for r in recent_rows:
+        d = dict(r)
+
+        # Nutrients (clamped like the comments in pattern_analysis.sql)
+        fiber   = clamp(d.get("fiber_g"),   10)
+        protein = clamp(d.get("protein_g"), 20)
+        sugar   = clamp(d.get("sugar_g"),   20)
+        fat     = clamp(d.get("fat_g"),     40)
+        kcal    = clamp(d.get("kcal"),     500)
+
+        # Feelings with defaults (same as before)
+        energy   = d.get("energy")
+        mood     = d.get("mood")
+        bloating = d.get("bloating")
+        nausea   = d.get("nausea")
+
+        energy   = 5 if energy   is None else float(energy)
+        mood     = 5 if mood     is None else float(mood)
+        bloating = 0 if bloating is None else float(bloating)
+        nausea   = 0 if nausea   is None else float(nausea)
+
+        meal_score = (
+            fiber * 1.0 +
+            protein * 0.8 -
+            sugar * 1.2 -
+            fat * 0.5 -
+            kcal * 0.04 +
+            energy * 2.0 +
+            mood   * 2.0 -
+            bloating * 3.0 -
+            nausea   * 2.0
+        )
+
+        d["meal_score"] = meal_score
+
+        # Robustly infer meal type from the title
+        raw_title = (d.get("title") or "").strip().lower()
+        if "breakfast" in raw_title:
+            meal_type = "breakfast"
+        elif "lunch" in raw_title:
+            meal_type = "lunch"
+        elif "dinner" in raw_title:
+            meal_type = "dinner"
+        else:
+            meal_type = raw_title  # fallback
+
+        d["meal_type"] = meal_type
+        recent_meals.append(d)
+
+    # Build curated, de-duplicated recommendations
+    meal_types = ["breakfast", "lunch", "dinner"]
+    recommended_meals = {t: [] for t in meal_types}
+    seen_keys = {t: set() for t in meal_types}
+
+    for meal_type in meal_types:
+        # take only meals that belong to this type
+        candidates = [
+            m for m in recent_meals
+            if m.get("meal_type") == meal_type
+        ]
+        candidates.sort(key=lambda m: m.get("meal_score") or 0, reverse=True)
+
+        for m in candidates:
+            # Treat meals with almost-identical macros as duplicates
+            key = (
+                round(m.get("kcal") or 0, -1),
+                round(m.get("protein_g") or 0),
+                round(m.get("carbs_g") or 0),
+                round(m.get("sugar_g") or 0),
+            )
+            if key in seen_keys[meal_type]:
+                continue
+
+            seen_keys[meal_type].add(key)
+            recommended_meals[meal_type].append(m)
+
+        # keep just a few top ideas per meal type
+        recommended_meals[meal_type] = recommended_meals[meal_type][:3]
+
+    conn.close()
+
+    return render_template(
+        "mealAnalysis.html",
+        good_foods=good_foods,
+        bad_foods=bad_foods,
+        recommended_meals=recommended_meals,
+    )
+
 
 # Happyness State
-@app.route("/log_physical_state")
+@app.route("/log_physical_state", methods=["GET", "POST"])
 def log_physical_state():
-    if 'user' not in session:
-        return redirect(url_for('login_page'))
-    return render_template('logPhysicalState.html')
+    if "user" not in session:
+        return redirect(url_for("login_page"))
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # current user
+    user_email = session.get("user")
+    user_row = cur.execute(
+        "SELECT id FROM users WHERE email = ?",
+        (user_email,)
+    ).fetchone()
+
+    if not user_row:
+        conn.close()
+        flash("User not found.", "error")
+        return redirect(url_for("login_page"))
+
+    user_id = user_row["id"]
+
+    if request.method == "POST":
+        # Which meal is this about?
+        meal_id = request.form.get("meal_id")
+        if not meal_id:
+            # fallback: last meal
+            last_meal = cur.execute(
+                "SELECT id FROM meals WHERE user_id = ? ORDER BY eaten_at DESC LIMIT 1",
+                (user_id,)
+            ).fetchone()
+            if not last_meal:
+                conn.close()
+                flash("You don't have any meals logged yet.", "error")
+                return redirect(url_for("log_meal"))
+            meal_id = last_meal["id"]
+        else:
+            # make sure the chosen meal actually belongs to this user
+            owned = cur.execute(
+                "SELECT id FROM meals WHERE id = ? AND user_id = ?",
+                (meal_id, user_id)
+            ).fetchone()
+            if not owned:
+                conn.close()
+                flash("That meal does not belong to your account.", "error")
+                return redirect(url_for("log_physical_state"))
+
+        # helper to parse 0–10 ints
+        def as_int(name, default=0):
+            val = request.form.get(name)
+            try:
+                v = int(val)
+                if v < 0: v = 0
+                if v > 10: v = 10
+                return v
+            except Exception:
+                return default
+
+        mood = as_int("mood", 5)
+        energy = as_int("energy", 5)
+        bloating = as_int("bloating", 0)
+        nausea = as_int("nausea", 0)
+        notes = request.form.get("notes") or None
+
+        cur.execute(
+            """
+            INSERT INTO feelings (meal_id, user_id, mood, energy, bloating, nausea, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (meal_id, user_id, mood, energy, bloating, nausea, notes),
+        )
+        conn.commit()
+        conn.close()
+
+        flash("Thanks! We saved how you felt after this meal.", "success")
+        return redirect(url_for("meal_analysis"))
+
+    # GET: show the form with the user's recent meals to choose from
+    meals = cur.execute(
+        "SELECT id, title, eaten_at FROM meals WHERE user_id = ? ORDER BY eaten_at DESC LIMIT 10",
+        (user_id,)
+    ).fetchall()
+    conn.close()
+
+    return render_template("logPhysicalState.html", meals=meals)
+
 
 @app.route('/meal/<int:meal_id>', methods=['GET'])
 def get_meal_json(meal_id):
@@ -547,30 +799,42 @@ def update_meal(meal_id):
         conn.rollback()
         return jsonify(success=False, error=str(e)), 500
 
-@app.route('/meal/<int:meal_id>/delete', methods=['POST'])
+@app.route("/delete_meal/<int:meal_id>", methods=["POST"])
+
 def delete_meal(meal_id):
-    if 'user' not in session:
-        return jsonify(success=False, error='Not authenticated'), 401
-    conn = get_db()
-    cur = conn.cursor()
-    user_email = session.get('user')
-    user_row = cur.execute("SELECT id FROM users WHERE email = ?", (user_email,)).fetchone()
-    if not user_row:
-        return jsonify(success=False, error='User not found'), 400
-    user_id = user_row['id']
-    
-    meal = cur.execute("SELECT id, user_id FROM meals WHERE id = ?", (meal_id,)).fetchone()
-    if not meal or meal['user_id'] != user_id:
-        return jsonify(success=False, error='Meal not found or access denied'), 404
-    
-    try:
-        cur.execute("DELETE FROM meals WHERE id = ?", (meal_id,))
-        conn.commit()
-        return jsonify(success=True)
-    except Exception as e:
-        conn.rollback()
-        return jsonify(success=False, error=str(e)), 500
-    
+    db = get_db()
+    cur = db.cursor()
+
+    # 1) Make sure the meal belongs to this user
+    meal = cur.execute(
+        "SELECT id FROM meals WHERE id = ? AND user_id = ?",
+        (meal_id, g.user["id"])
+    ).fetchone()
+    if meal is None:
+        abort(404)
+
+    # 2) Delete anything that depends on this meal
+    cur.execute(
+        "DELETE FROM feelings WHERE meal_id = ? AND user_id = ?",
+        (meal_id, g.user["id"])
+    )
+    cur.execute(
+        "DELETE FROM meal_items WHERE meal_id = ?",
+        (meal_id,)
+    )
+
+    # 3) Finally delete the meal itself
+    cur.execute(
+        "DELETE FROM meals WHERE id = ? AND user_id = ?",
+        (meal_id, g.user["id"])
+    )
+
+    db.commit()
+    flash("Meal deleted.")
+    return redirect(url_for("home"))
+
+
+   
 @app.route("/api/log_feelings", methods=["POST"])
 def api_log_feelings():
     """
@@ -613,7 +877,7 @@ def api_log_feelings():
         return jsonify(success=False, error="User not found"), 400
     user_id = user_row["id"]
 
-    # Optional: ensure the meal belongs to this user
+   
     meal_row = cur.execute(
         "SELECT id, user_id FROM meals WHERE id = ?",
         (meal_id,)
