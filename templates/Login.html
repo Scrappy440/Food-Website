@@ -23,26 +23,35 @@
             </div>
         </nav>
     </nav>
-    <header>
-        <main class="login-content">
-            <div class="login-box">
-            <h1>Welcome Back!</h1>
+    <section class="login-section">
+        <div class="login-container">
+            <div class="login-header">
+                <h2>Welcome Back!</h2>
+                <p>Log in to continue on your nutrition journey</p>
+            </div>
 
-            <!-- Display error messages -->
-             
-             {% if error %}
-                <div class="error-message">{{ error }}</div>
+            {% if error %}
+                <div class="error-message">
+                    <i class="fas fa-exclamation-circle"></i>
+                    {{ error }}
+                </div>
             {% endif %}
             
-            
-            <form id="login" name="login" action="{{ url_for('login') }}" method="post">
-                <div class="user-box">
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Log In</button>
+            <form id="login" name="login" action="{{ url_for('login') }}" method="post" class="login-form">
+                <div class="input-group">
+                    <input type="email" name="email" placeholder="Email Address" required>
                 </div>
+                <div class="input-group">
+                    <input type="password" name="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-submit-btn">Log In</button>
             </form>
-        </main>
+
+            <p class="login-footer-text">
+                Don't have an account? <a href="{{ url_for('index') }}">Sign up here</a>
+            </p>
+        </div>
+    </section>
 
 </body>
 </html>
