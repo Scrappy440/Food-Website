@@ -65,14 +65,15 @@ SELECT * FROM used;
 
 
 
---Food pair effects(“broccoli + chicken makes me feel great”)
+-- Food pair effects (“broccoli + chicken makes me feel great”)
 
 CREATE VIEW IF NOT EXISTS v_user_pair_agg AS
 WITH pairs AS (
     SELECT
         m.user_id,
-        LEAST(a.food_id, b.food_id)    AS food_a,
-        GREATEST(a.food_id, b.food_id) AS food_b,
+        -- use MIN/MAX instead of LEAST/GREATEST (better SQLite compatibility)
+        MIN(a.food_id, b.food_id)  AS food_a,
+        MAX(a.food_id, b.food_id)  AS food_b,
         f.mood,
         f.energy,
         f.bloating
@@ -111,32 +112,80 @@ HAVING COUNT(*) >= 2;
 --   + mood*2
 --   - bloating*3
 
+
 CREATE VIEW IF NOT EXISTS v_food_health_score AS
 SELECT
     f.id AS food_id,
     f.name,
 
+    -- Clamp each nutrient into a safe range and turn it into points
+    (CASE
+        WHEN f.fiber_g IS NULL THEN 0
+        WHEN f.fiber_g < 10      THEN f.fiber_g
+        ELSE 10
+     END) * 1.0 AS fiber_score,
 
-    (LEAST(f.fiber_g, 10) * 1.0)                      AS fiber_score,
-    (LEAST(f.protein_g, 20) * 0.8)                    AS protein_score,
-    -(LEAST(f.sugar_g, 20) * 1.2)                     AS sugar_penalty,
-    -(LEAST(f.fat_g, 40) * 0.5)                       AS fat_penalty,
-    -(LEAST(f.kcal, 500) * 0.04)                      AS calorie_penalty,
+    (CASE
+        WHEN f.protein_g IS NULL THEN 0
+        WHEN f.protein_g < 20    THEN f.protein_g
+        ELSE 20
+     END) * 0.8 AS protein_score,
 
-    -- Final health score 
+    -(CASE
+        WHEN f.sugar_g IS NULL THEN 0
+        WHEN f.sugar_g < 20     THEN f.sugar_g
+        ELSE 20
+     END) * 1.2 AS sugar_penalty,
+
+    -(CASE
+        WHEN f.fat_g IS NULL THEN 0
+        WHEN f.fat_g < 40      THEN f.fat_g
+        ELSE 40
+     END) * 0.5 AS fat_penalty,
+
+    -(CASE
+        WHEN f.kcal IS NULL THEN 0
+        WHEN f.kcal < 500    THEN f.kcal
+        ELSE 500
+     END) * 0.04 AS calorie_penalty,
+
     (
-        (LEAST(f.fiber_g, 10) * 1.0) +
-        (LEAST(f.protein_g, 20) * 0.8) -
-        (LEAST(f.sugar_g, 20) * 1.2) -
-        (LEAST(f.fat_g, 40) * 0.5) -
-        (LEAST(f.kcal, 500) * 0.04)
+        (CASE
+            WHEN f.fiber_g IS NULL THEN 0
+            WHEN f.fiber_g < 10      THEN f.fiber_g
+            ELSE 10
+         END) * 1.0
+        +
+        (CASE
+            WHEN f.protein_g IS NULL THEN 0
+            WHEN f.protein_g < 20    THEN f.protein_g
+            ELSE 20
+         END) * 0.8
+        -
+        (CASE
+            WHEN f.sugar_g IS NULL THEN 0
+            WHEN f.sugar_g < 20     THEN f.sugar_g
+            ELSE 20
+         END) * 1.2
+        -
+        (CASE
+            WHEN f.fat_g IS NULL THEN 0
+            WHEN f.fat_g < 40      THEN f.fat_g
+            ELSE 40
+         END) * 0.5
+        -
+        (CASE
+            WHEN f.kcal IS NULL THEN 0
+            WHEN f.kcal < 500    THEN f.kcal
+            ELSE 500
+         END) * 0.04
     ) AS base_health_score
-
 FROM foods f;
 
 
 
---USER PERSONALIZED FOOD HEALTH SCORE (how the user actually FEELS after eating the food)
+
+-- USER PERSONALIZED FOOD HEALTH SCORE (how the user actually FEELS after eating the food)
 
 CREATE VIEW IF NOT EXISTS v_user_food_health AS
 SELECT
@@ -162,7 +211,7 @@ FROM v_user_food_agg u
 JOIN v_food_health_score f ON f.food_id = u.food_id;
 
 
---Indexes
+-- Indexes
 CREATE INDEX IF NOT EXISTS idx_meal_items_meal   ON meal_items(meal_id);
 CREATE INDEX IF NOT EXISTS idx_meal_items_food   ON meal_items(food_id);
 CREATE INDEX IF NOT EXISTS idx_meals_user_time   ON meals(user_id, eaten_at DESC);

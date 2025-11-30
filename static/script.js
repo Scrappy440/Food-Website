@@ -284,17 +284,17 @@ if (document.getElementById('feelingForm')) {
 
     // Form submission
     feelingForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
         const time = timeInput.value;
 
         if (!time) {
             showAlert('Please select a time', 'error');
+            e.preventDefault();
             return;
         }
 
         if (selectedFeelings.length === 0) {
             showAlert('Please select at least one feeling', 'error');
+            e.preventDefault();
             return;
         }
 
@@ -314,12 +314,10 @@ if (document.getElementById('feelingForm')) {
         updateDisplay();
         showSuccessMessage();
 
-        feelingForm.reset();
-        selectedFeelings = [];
-        feelingOptions.forEach(option => option.classList.remove('selected'));
-        updateSelectedFeelingsDisplay();
+        // let the form actually POST to Flask after we update local UI
+        // (no e.preventDefault here once validation passes)
+
         localStorage.removeItem('feelingDraft');
-        setCurrentTime();
     });
 
     // Format time to 12-hour

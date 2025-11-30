@@ -36,10 +36,31 @@
                     <p>Keep enjoying these!</p>
                 </div>
                 <div class="card-content">
-                    <div class="empty-state">
-                        <i class="fas fa-info-circle"></i>
-                        <p>No data yet! Log your meals and track how you feel to see personalized recommendations.</p>
-                    </div>
+                    {% if good_foods and good_foods|length > 0 %}
+                        <ul class="food-list">
+                            {% for row in good_foods %}
+                                <li class="food-list-item">
+                                    <div class="food-main-line">
+                                        <span class="food-name">{{ row.name }}</span>
+                                        <span class="food-score">
+                                            {{ "%.1f"|format(row.personalized_score) }}
+                                        </span>
+                                    </div>
+                                    <div class="food-sub-line">
+                                        <span class="food-meals-count">
+                                            Based on {{ row.n_meals }}
+                                            meal{{ 's' if row.n_meals != 1 else '' }}
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-info-circle"></i>
+                            <p>No data yet! Log your meals and track how you feel to see personalized recommendations.</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
 
@@ -50,10 +71,31 @@
                     <p>These may not agree with you</p>
                 </div>
                 <div class="card-content">
-                    <div class="empty-state">
-                        <i class="fas fa-info-circle"></i>
-                        <p>No data yet! Log your meals and track how you feel to see personalized recommendations.</p>
-                    </div>
+                    {% if bad_foods and bad_foods|length > 0 %}
+                        <ul class="food-list">
+                            {% for row in bad_foods %}
+                                <li class="food-list-item">
+                                    <div class="food-main-line">
+                                        <span class="food-name">{{ row.name }}</span>
+                                        <span class="food-score bad">
+                                            {{ "%.1f"|format(row.personalized_score) }}
+                                        </span>
+                                    </div>
+                                    <div class="food-sub-line">
+                                        <span class="food-meals-count">
+                                            Based on {{ row.n_meals }}
+                                            meal{{ 's' if row.n_meals != 1 else '' }}
+                                        </span>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-info-circle"></i>
+                            <p>No data yet! Log your meals and track how you feel to see personalized recommendations.</p>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -65,34 +107,100 @@
                 <p>Meal ideas based on foods that work well for your body</p>
             </div>
 
-            <div class="meals-grid">
-                <div class="meal-card">
-                    <div class="meal-header">
-                        <h3><i class="fas fa-coffee"></i> Breakfast</h3>
-                    </div>
-                    <div class="meal-content">
-                        <p class="empty-meal-state">Recommendations will appear here based on your data</p>
-                    </div>
-                </div>
+           <div class="meals-grid">
+    <!-- Breakfast card -->
+    <div class="meal-card">
+        <div class="meal-header">
+            <h3><i class="fas fa-coffee"></i> Breakfast</h3>
+        </div>
+        <div class="meal-content">
+            {% if recommended_meals.breakfast %}
+                <ul>
+                    {% for m in recommended_meals.breakfast %}
+    <li>
+       
+        <strong>{{ m.eaten_at[:10] }}</strong><br>
 
-                <div class="meal-card">
-                    <div class="meal-header">
-                        <h3><i class="fas fa-utensils"></i> Lunch</h3>
-                    </div>
-                    <div class="meal-content">
-                        <p class="empty-meal-state">Recommendations will appear here based on your data</p>
-                    </div>
-                </div>
+       
+        <strong>{{ m.title|capitalize }}</strong>
+        — Score: {{ '%.1f'|format(m.meal_score) }}<br>
 
-                <div class="meal-card">
-                    <div class="meal-header">
-                        <h3><i class="fas fa-drumstick-bite"></i> Dinner</h3>
-                    </div>
-                    <div class="meal-content">
-                        <p class="empty-meal-state">Recommendations will appear here based on your data</p>
-                    </div>
-                </div>
-            </div>
+        
+        {{ m.kcal|default(0)|round(0) }} kcal ·
+        {{ m.protein_g|default(0)|round(1) }} g protein ·
+        {{ m.carbs_g|default(0)|round(1) }} g carbs ·
+        {{ m.sugar_g|default(0)|round(1) }} g sugar
+    </li>
+{% endfor %}
+
+                </ul>
+            {% else %}
+                <p class="empty-meal-state">
+                    Recommendations will appear here based on your data
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Lunch card -->
+    <div class="meal-card">
+        <div class="meal-header">
+            <h3><i class="fas fa-utensils"></i> Lunch</h3>
+        </div>
+        <div class="meal-content">
+            {% if recommended_meals.lunch %}
+                <ul>
+                    {% for m in recommended_meals.lunch %}
+    <li>
+        <strong>{{ m.eaten_at[:10] }}</strong><br>
+        <strong>{{ m.title|capitalize }}</strong>
+        — Score: {{ '%.1f'|format(m.meal_score) }}<br>
+        {{ m.kcal|default(0)|round(0) }} kcal ·
+        {{ m.protein_g|default(0)|round(1) }} g protein ·
+        {{ m.carbs_g|default(0)|round(1) }} g carbs ·
+        {{ m.sugar_g|default(0)|round(1) }} g sugar
+    </li>
+{% endfor %}
+
+                </ul>
+            {% else %}
+                <p class="empty-meal-state">
+                    Recommendations will appear here based on your data
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+        <!-- Dinner card -->
+    <div class="meal-card">
+        <div class="meal-header">
+            <h3><i class="fas fa-drumstick-bite"></i> Dinner</h3>
+        </div>
+        <div class="meal-content">
+            {% if recommended_meals.dinner %}
+                <ul>
+                    {% for m in recommended_meals.dinner %}
+    <li>
+        <strong>{{ m.eaten_at[:10] }}</strong><br>
+        <strong>{{ m.title|capitalize }}</strong>
+        — Score: {{ '%.1f'|format(m.meal_score) }}<br>
+        {{ m.kcal|default(0)|round(0) }} kcal ·
+        {{ m.protein_g|default(0)|round(1) }} g protein ·
+        {{ m.carbs_g|default(0)|round(1) }} g carbs ·
+        {{ m.sugar_g|default(0)|round(1) }} g sugar
+    </li>
+{% endfor %}
+                </ul>
+            {% else %}
+                <p class="empty-meal-state">
+                    Recommendations will appear here based on your data
+                </p>
+            {% endif %}
+        </div>
+    </div>
+
+         </div>
+
         </div>
     </div>
 </body>
