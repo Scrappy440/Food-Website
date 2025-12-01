@@ -139,11 +139,20 @@ function toggleQuickAdd() {
 
 document.addEventListener('DOMContentLoaded', function() {
     // Date navigation for meal logging
-    let currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    
     const today = new Date();
     today.setHours(0, 0, 0, 0); // Reset time to compare dates only
+    
+    // Check if there's a date parameter in URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const dateParam = urlParams.get('date');
+    
+    let currentDate;
+    if (dateParam) {
+        currentDate = new Date(dateParam + 'T00:00:00');
+    } else {
+        currentDate = new Date();
+    }
+    currentDate.setHours(0, 0, 0, 0);
     
     const dateInput = document.getElementById('meal-date');
     const dateDisplay = document.getElementById('current-date');
@@ -151,14 +160,14 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextDateBtn = document.getElementById('next-date-btn');
     
     if (dateInput && dateDisplay) {
-        // Initialize with today's date
+        // Initialize with the current date
         updateDateDisplay();
         
         // Previous date button
         if (prevDateBtn) {
             prevDateBtn.addEventListener('click', function() {
                 currentDate.setDate(currentDate.getDate() - 1);
-                updateDateDisplay();
+                navigateToDate();
             });
         }
         
@@ -167,9 +176,14 @@ document.addEventListener('DOMContentLoaded', function() {
             nextDateBtn.addEventListener('click', function() {
                 // Move forward one day
                 currentDate.setDate(currentDate.getDate() + 1);
-                updateDateDisplay();
+                navigateToDate();
             });
         }
+    }
+    
+    function navigateToDate() {
+        const dateStr = currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+        window.location.href = `/logmeal?date=${dateStr}`;
     }
     
     function updateDateDisplay() {

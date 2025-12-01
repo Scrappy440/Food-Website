@@ -126,6 +126,11 @@ def log_meal():
         if 'user' not in session:
             return redirect(url_for('login_page'))
         
+        # Get the date from query parameter, default to today
+        selected_date = request.args.get('date')
+        if not selected_date:
+            selected_date = datetime.date.today().isoformat()
+        
         conn = get_db()
         cur = conn.cursor()
         user_email = session.get('user')
@@ -151,7 +156,13 @@ def log_meal():
         
         if user_row:
             user_id = user_row['id']
-            meal_rows = cur.execute("SELECT id, eaten_at, title FROM meals WHERE user_id = ? ORDER BY eaten_at DESC LIMIT 50", (user_id,)).fetchall()
+            # Filter meals by the selected date
+            meal_rows = cur.execute(
+                """SELECT id, eaten_at, title FROM meals 
+                   WHERE user_id = ? AND date(eaten_at) = date(?)
+                   ORDER BY eaten_at DESC""",
+                (user_id, selected_date)
+            ).fetchall()
             for m in meal_rows:
                 items = []
                 item_rows = cur.execute("SELECT mi.id, mi.quantity_servings, f.name, f.kcal, f.protein_g, f.carbs_g, f.fat_g FROM meal_items mi JOIN foods f ON f.id = mi.food_id WHERE mi.meal_id = ?", (m['id'],)).fetchall()
@@ -181,12 +192,18 @@ def log_meal():
             else:
                 meals_by_type['snack'].append(mm)
         
-        # compute today's totals
+        # compute today's totals (for the selected date)
         totals = {'kcal': 0, 'protein': 0, 'carbs': 0, 'fat': 0}
         if user_row:
             user_id = user_row['id']
             try:
-                r = cur.execute("SELECT SUM(kcal) AS kcal, SUM(protein_g) AS protein, SUM(carbs_g) AS carbs, SUM(fat_g) AS fat FROM v_meal_nutrition WHERE user_id = ? AND date(eaten_at) = date('now','localtime')", (user_id,)).fetchone()
+                r = cur.execute(
+                    """SELECT SUM(kcal) AS kcal, SUM(protein_g) AS protein, 
+                              SUM(carbs_g) AS carbs, SUM(fat_g) AS fat 
+                       FROM v_meal_nutrition 
+                       WHERE user_id = ? AND date(eaten_at) = date(?)""",
+                    (user_id, selected_date)
+                ).fetchone()
                 if r:
                     totals['kcal'] = r['kcal'] or 0
                     totals['protein'] = r['protein'] or 0
@@ -195,7 +212,10 @@ def log_meal():
             except Exception:
                 pass
         
-        return render_template('logMeal.html', meals_by_type=meals_by_type, totals=totals)
+        return render_template('logMeal.html', 
+                             meals_by_type=meals_by_type, 
+                             totals=totals,
+                             selected_date=selected_date)
     
     # POST - save meal (AJAX)
     if 'user' not in session:
