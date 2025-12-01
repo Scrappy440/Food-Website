@@ -1,1 +1,4 @@
 .env
+
+# USDA Data files (too large for git)
+data/
