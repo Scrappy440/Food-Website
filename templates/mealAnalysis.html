@@ -32,7 +32,7 @@
             <!-- Good Foods Card -->
             <div class="analysis-card good-foods-card">
                 <div class="card-header">
-                    <h2><i class="fas fa-thumbs-up"></i> Foods That Work Well For You</h2>
+                    <h2><i class="fas fa-thumbs-up"></i> Foods That Work Well For You!</h2>
                     <p>Keep enjoying these!</p>
                 </div>
                 <div class="card-content">
@@ -100,107 +100,151 @@
             </div>
         </div>
 
-        <!-- Recommended Meals Section -->
-        <div class="recommended-meals-section">
+        <!-- Medical Resources Section -->
+        <div class="resources-section">
             <div class="section-header">
-                <h2><i class="fas fa-lightbulb"></i> Recommended Meals For You</h2>
-                <p>Meal ideas based on foods that work well for your body</p>
+                <h2><i class="fas fa-book-medical"></i> Health & Nutrition Resources</h2>
+                <p>For more serious inquiries, consult a trusted medical professional. Below are some trusted resources to get you started.</p>
             </div>
 
-           <div class="meals-grid">
-    <!-- Breakfast card -->
-    <div class="meal-card">
-        <div class="meal-header">
-            <h3><i class="fas fa-coffee"></i> Breakfast</h3>
-        </div>
-        <div class="meal-content">
-            {% if recommended_meals.breakfast %}
-                <ul>
-                    {% for m in recommended_meals.breakfast %}
-    <li>
-       
-        <strong>{{ m.eaten_at[:10] }}</strong><br>
+            <div class="resources-grid">
+                <!-- Nutrition Basics -->
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-apple-alt"></i>
+                    </div>
+                    <h3>Nutrition Basics</h3>
+                    <div class="resource-links">
+                        <a href="https://www.nutrition.gov/topics/basic-nutrition" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            USDA - Basic Nutrition
+                        </a>
+                        <a href="https://www.cdc.gov/nutrition/features/healthy-eating-tips.html" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            CDC - Healthy Eating Tips
+                        </a>
+                        <a href="https://www.health.harvard.edu/topics/nutrition" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            Harvard Health - Nutrition
+                        </a>
+                    </div>
+                </div>
 
-       
-        <strong>{{ m.title|capitalize }}</strong>
-        — Score: {{ '%.1f'|format(m.meal_score) }}<br>
+                <!-- Digestive Health -->
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h3>Digestive Health</h3>
+                    <div class="resource-links">
+                        <a href="https://www.health.harvard.edu/topics/digestive-health" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            Harvard Health - Digestive Health
+                        </a>
+                        <a href="https://www.uchealth.org/today/improving-gut-health-improves-all-aspects-of-your-health/" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            UC Health - Improving your gut health improves all aspects of your health, including your mood
+                        </a>
+                        <a href="https://my.clevelandclinic.org/health/body/7041-digestive-system" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            Cleveland Clinic - Digestive Health
+                        </a>
+                    </div>
+                </div>
 
-        
-        {{ m.kcal|default(0)|round(0) }} kcal ·
-        {{ m.protein_g|default(0)|round(1) }} g protein ·
-        {{ m.carbs_g|default(0)|round(1) }} g carbs ·
-        {{ m.sugar_g|default(0)|round(1) }} g sugar
-    </li>
-{% endfor %}
+                <!-- Food Sensitivities -->
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-exclamation-circle"></i>
+                    </div>
+                    <h3>Food Sensitivities & Allergies</h3>
+                    <div class="resource-links">
+                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC8152468/" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            PMC - Food Allergy and Intolerance: A Narrative Review on Nutritional Concerns
+                        </a>
+                        <a href="https://www.ifm.org/articles/identifying-food-allergies-sensitivities" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            IFM - The Importance of Identifying Food Allergies & Food Sensitivities
+                        </a>
+                        <a href="https://www.health.harvard.edu/blog/food-allergy-intolerance-or-sensitivity-whats-the-difference-and-why-does-it-matter-2020013018736" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            Harvard Health - Food Allergy, Intolerance, or Sensitivity: What's the Difference and Why Does It Matter?
+                        </a>
+                    </div>
+                </div>
 
-                </ul>
-            {% else %}
-                <p class="empty-meal-state">
-                    Recommendations will appear here based on your data
-                </p>
-            {% endif %}
-        </div>
-    </div>
+                <!-- Balanced Diet -->
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3>Balanced Diet & Wellness</h3>
+                    <div class="resource-links">
+                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7071223/" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            PMC - Defining a Healthy Diet: Evidence for the Role of Contemporary Dietary Patterns in Health and Disease
+                        </a>
+                        <a href="https://www.ama-assn.org/public-health/prevention-wellness/what-doctors-wish-patients-knew-about-healthy-eating" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            AMA - What Doctors Wish Patients Knew About Healthy Eating
+                        </a>
+                        <a href="https://www.uhc.com/news-articles/healthy-living/8-mind-body-benefits-of-eating-healthy" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            UnitedHealthCare - 8 Mind-Body Benefits of Eating Healthy
+                        </a>
+                    </div>
+                </div>
 
-    <!-- Lunch card -->
-    <div class="meal-card">
-        <div class="meal-header">
-            <h3><i class="fas fa-utensils"></i> Lunch</h3>
-        </div>
-        <div class="meal-content">
-            {% if recommended_meals.lunch %}
-                <ul>
-                    {% for m in recommended_meals.lunch %}
-    <li>
-        <strong>{{ m.eaten_at[:10] }}</strong><br>
-        <strong>{{ m.title|capitalize }}</strong>
-        — Score: {{ '%.1f'|format(m.meal_score) }}<br>
-        {{ m.kcal|default(0)|round(0) }} kcal ·
-        {{ m.protein_g|default(0)|round(1) }} g protein ·
-        {{ m.carbs_g|default(0)|round(1) }} g carbs ·
-        {{ m.sugar_g|default(0)|round(1) }} g sugar
-    </li>
-{% endfor %}
+                <!-- Mental Health & Food -->
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Mental Health & Nutrition</h3>
+                    <div class="resource-links">
+                        <a href="https://www.health.harvard.edu/blog/nutritional-psychiatry-your-brain-on-food-201511168626" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            Harvard Health - Nutritional Psychiatry: Your Brain on Food
+                        </a>
+                        <a href="https://www.uhc.com/news-articles/healthy-living/diet-and-mental-health" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            UnitedHealthCare - How food and mental health connect
+                        </a>
+                        <a href="https://www.massgeneralbrigham.org/en/about/newsroom/articles/how-food-impacts-your-mood" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            Mass General Brigham - How Food Impacts Your Mood
+                        </a>
+                    </div>
+                </div>
 
-                </ul>
-            {% else %}
-                <p class="empty-meal-state">
-                    Recommendations will appear here based on your data
-                </p>
-            {% endif %}
-        </div>
-    </div>
+                <!-- When to See a Doctor -->
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3>When to Seek Medical Help</h3>
+                    <div class="resource-links">
+                        <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7376822/" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            PMC - When Is It Safe to See the Doctor?
+                        </a>
+                        <a href="https://www.templehealth.org/about/blog/why-its-important-to-see-your-doctor" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            Temple Health - Why It's Important to See Your Doctor
+                        </a>
+                        <a href="https://www.takingcharge.csh.umn.edu/when-should-you-go-doctor" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-external-link-alt"></i>
+                            University of Minnesota - When Should You Go to the Doctor?
+                        </a>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Dinner card -->
-    <div class="meal-card">
-        <div class="meal-header">
-            <h3><i class="fas fa-drumstick-bite"></i> Dinner</h3>
-        </div>
-        <div class="meal-content">
-            {% if recommended_meals.dinner %}
-                <ul>
-                    {% for m in recommended_meals.dinner %}
-    <li>
-        <strong>{{ m.eaten_at[:10] }}</strong><br>
-        <strong>{{ m.title|capitalize }}</strong>
-        — Score: {{ '%.1f'|format(m.meal_score) }}<br>
-        {{ m.kcal|default(0)|round(0) }} kcal ·
-        {{ m.protein_g|default(0)|round(1) }} g protein ·
-        {{ m.carbs_g|default(0)|round(1) }} g carbs ·
-        {{ m.sugar_g|default(0)|round(1) }} g sugar
-    </li>
-{% endfor %}
-                </ul>
-            {% else %}
-                <p class="empty-meal-state">
-                    Recommendations will appear here based on your data
-                </p>
-            {% endif %}
-        </div>
-    </div>
-
-         </div>
-
+            <div class="disclaimer-box">
+                <i class="fas fa-info-circle"></i>
+                <p><strong>Disclaimer:</strong> The resources provided are for informational purposes only and are not a substitute for professional medical advice, diagnosis, or treatment. Always seek the advice of your physician or other qualified health provider with any questions you may have regarding a medical condition.</p>
+            </div>
         </div>
     </div>
 </body>
