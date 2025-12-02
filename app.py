@@ -748,14 +748,42 @@ def log_physical_state():
         flash("Thanks! We saved how you felt after this meal.", "success")
         return redirect(url_for("log_physical_state")) 
     # GET: show the form with the user's recent meals to choose from
-    meals = cur.execute(
-        "SELECT id, title, eaten_at FROM meals WHERE user_id = ? ORDER BY eaten_at DESC LIMIT 10",
+    # Get meals with their first ingredient
+    meals_raw = cur.execute(
+        """
+        SELECT 
+            m.id, 
+            m.title, 
+            date(m.eaten_at) as eaten_date,
+            (SELECT f.name 
+            FROM meal_items mi 
+            JOIN foods f ON f.id = mi.food_id 
+            WHERE mi.meal_id = m.id 
+            LIMIT 1) as first_ingredient
+        FROM meals m
+        WHERE m.user_id = ?
+        ORDER BY m.eaten_at DESC
+        LIMIT 10
+        """,
         (user_id,)
     ).fetchall()
+
+    # Format the meals for display
+    meals = []
+    for m in meals_raw:
+        ingredient = m['first_ingredient'] or 'No ingredients'
+        
+        meals.append({
+            'id': m['id'],
+            'title': m['title'],
+            'eaten_at': m['eaten_date'],
+            'ingredient': ingredient,
+            'display': f"{m['eaten_date']} - {ingredient}"
+        })
+
     conn.close()
 
     return render_template("logPhysicalState.html", meals=meals)
-
 
 @app.route('/meal/<int:meal_id>', methods=['GET'])
 def get_meal_json(meal_id):
