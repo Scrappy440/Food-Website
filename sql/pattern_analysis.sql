@@ -24,6 +24,62 @@ FROM meals m
 LEFT JOIN v_meal_nutrition v ON v.meal_id = m.id
 LEFT JOIN feelings f          ON f.meal_id = m.id;
 
+CREATE VIEW IF NOT EXISTS v_meal_health AS
+SELECT
+    u.meal_id,
+    u.user_id,
+    u.eaten_at,
+    u.kcal,
+    u.protein_g,
+    u.carbs_g,
+    u.fat_g,
+    u.sugar_g,
+    u.fiber_g,
+    u.mood,
+    u.energy,
+    u.bloating,
+    u.nausea,
+    (
+        (CASE
+            WHEN u.fiber_g IS NULL THEN 0
+            WHEN u.fiber_g < 10      THEN u.fiber_g
+            ELSE 10
+         END) * 1.0
+        +
+        (CASE
+            WHEN u.protein_g IS NULL THEN 0
+            WHEN u.protein_g < 20    THEN u.protein_g
+            ELSE 20
+         END) * 0.8
+        -
+        (CASE
+            WHEN u.sugar_g IS NULL THEN 0
+            WHEN u.sugar_g < 20     THEN u.sugar_g
+            ELSE 20
+         END) * 1.2
+        -
+        (CASE
+            WHEN u.fat_g IS NULL THEN 0
+            WHEN u.fat_g < 40      THEN u.fat_g
+            ELSE 40
+         END) * 0.5
+        -
+        (CASE
+            WHEN u.kcal IS NULL THEN 0
+            WHEN u.kcal < 500    THEN u.kcal
+            ELSE 500
+         END) * 0.04
+        +
+        COALESCE(u.energy, 5)   * 2.0
+        +
+        COALESCE(u.mood,   5)   * 2.0
+        -
+        COALESCE(u.bloating, 0) * 3.0
+        -
+        COALESCE(u.nausea,   0) * 2.0
+    ) AS meal_score
+FROM v_user_meal_features u;
+
 
 
 --  User-specific food effects (learned behavior)
@@ -34,13 +90,14 @@ WITH used AS (
         m.user_id,
         mi.food_id,
         COUNT(*)              AS n_meals,
-        AVG(f.mood)           AS avg_mood,
-        AVG(f.energy)         AS avg_energy,
-        AVG(f.bloating)       AS avg_bloating,
-        AVG(f.nausea)         AS avg_nausea
+        AVG(h.mood)           AS avg_mood,
+        AVG(h.energy)         AS avg_energy,
+        AVG(h.bloating)       AS avg_bloating,
+        AVG(h.nausea)         AS avg_nausea,
+        AVG(h.meal_score)     AS avg_meal_score
     FROM meal_items mi
-    JOIN meals m    ON m.id = mi.meal_id
-    JOIN feelings f ON f.meal_id = mi.meal_id
+    JOIN meals m        ON m.id = mi.meal_id
+    JOIN v_meal_health h ON h.meal_id = m.id
     GROUP BY m.user_id, mi.food_id
 )
 SELECT * FROM used;
@@ -192,23 +249,15 @@ SELECT
     u.user_id,
     u.food_id,
     f.name,
-    f.base_health_score,
+    s.base_health_score,
     u.n_meals,
-
     (u.avg_energy * 2.0)            AS energy_bonus,
     (u.avg_mood   * 2.0)            AS mood_bonus,
     -(u.avg_bloating * 3.0)         AS bloat_penalty,
-
-    -- Final personalized score
-    (
-        f.base_health_score +
-        (u.avg_energy * 2.0) +
-        (u.avg_mood   * 2.0) -
-        (u.avg_bloating * 3.0)
-    ) AS personalized_score
-
+    u.avg_meal_score                AS personalized_score
 FROM v_user_food_agg u
-JOIN v_food_health_score f ON f.food_id = u.food_id;
+JOIN v_food_health_score s ON s.food_id = u.food_id
+JOIN foods f               ON f.id      = u.food_id;
 
 
 -- Indexes
