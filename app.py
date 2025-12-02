@@ -1,3 +1,4 @@
+
 #11/12 Push
 
 # Notes: Autocomplete feature on Logging Meals page: using entire USDA database
@@ -43,6 +44,41 @@ def ensure_db_initialized():
     conn.close()
     print("[DB] Initialization complete.")
 
+@app.route('/meal/<int:meal_id>/delete', methods=['POST'])
+def ajax_delete_meal(meal_id):
+    if 'user' not in session:
+        return jsonify(success=False, error='Not authenticated'), 401
+    db = get_db()
+    cur = db.cursor()
+    user_email = session.get('user')
+    user_row = cur.execute("SELECT id FROM users WHERE email = ?", (user_email,)).fetchone()
+    if not user_row:
+        return jsonify(success=False, error='User not found'), 400
+    user_id = user_row['id']
+    meal = cur.execute(
+        "SELECT id FROM meals WHERE id = ? AND user_id = ?",
+        (meal_id, user_id)
+    ).fetchone()
+    if meal is None:
+        return jsonify(success=False, error='Meal not found or access denied'), 404
+
+# Delete
+    cur.execute(
+        "DELETE FROM feelings WHERE meal_id = ? AND user_id = ?",
+        (meal_id, user_id)
+    )
+    cur.execute(
+        "DELETE FROM meal_items WHERE meal_id = ?",
+        (meal_id,)
+    )
+#WHY IS THIS NOT WORKING
+    cur.execute(
+        "DELETE FROM meals WHERE id = ? AND user_id = ?",
+        (meal_id, user_id)
+    )
+
+    db.commit()
+    return jsonify(success=True)
 
 # 11/8
 #https://pytutorial.com/python-sqlite3-database-connection-guide/
@@ -822,21 +858,37 @@ def update_meal(meal_id):
 @app.route("/delete_meal/<int:meal_id>", methods=["POST"])
 
 def delete_meal(meal_id):
+    if 'user' not in session:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify(success=False, error='Not authenticated'), 401
+        return redirect(url_for('login_page'))
+
     db = get_db()
     cur = db.cursor()
+    user_email = session.get('user')
+    user_row = cur.execute("SELECT id FROM users WHERE email = ?", (user_email,)).fetchone()
+    if not user_row:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify(success=False, error='User not found'), 400
+        flash('User not found', 'error')
+        return redirect(url_for('login_page'))
+    user_id = user_row['id']
 
     # 1) Make sure the meal belongs to this user
     meal = cur.execute(
         "SELECT id FROM meals WHERE id = ? AND user_id = ?",
-        (meal_id, g.user["id"])
+        (meal_id, user_id)
     ).fetchone()
     if meal is None:
-        abort(404)
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify(success=False, error='Meal not found or access denied'), 404
+        flash('Meal not found or access denied', 'error')
+        return redirect(url_for('home'))
 
     # 2) Delete anything that depends on this meal
     cur.execute(
         "DELETE FROM feelings WHERE meal_id = ? AND user_id = ?",
-        (meal_id, g.user["id"])
+        (meal_id, user_id)
     )
     cur.execute(
         "DELETE FROM meal_items WHERE meal_id = ?",
@@ -846,10 +898,12 @@ def delete_meal(meal_id):
     # 3) Finally delete the meal itself
     cur.execute(
         "DELETE FROM meals WHERE id = ? AND user_id = ?",
-        (meal_id, g.user["id"])
+        (meal_id, user_id)
     )
 
     db.commit()
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify(success=True)
     flash("Meal deleted.")
     return redirect(url_for("home"))
 

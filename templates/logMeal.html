@@ -133,7 +133,7 @@
                             <span class="progress-values"><strong id="daily-calories">{{ totals.kcal|round(0)|int }}</strong> / <span id="daily-goal">2000</span></span>
                         </div>
                         <div class="progress-bar">
-                            <div id="daily-progress-fill" class="progress-fill" style="width:{% if totals.kcal %}{{ (totals.kcal / 2000 * 100)|round(1) }}%{% else %}0%{% endif %}"></div>
+                            <div id="daily-progress-fill" class="progress-fill" style="width: {{ (totals.kcal / 2000 * 100)|round(1) if totals.kcal else 0 }}%"></div>
                         </div>
                     </div>
                     <div class="macro-grid">
