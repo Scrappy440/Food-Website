@@ -697,6 +697,17 @@ def log_physical_state():
                 flash("That meal does not belong to your account.", "error")
                 return redirect(url_for("log_physical_state"))
 
+        # Get the time from the form
+        time_input = request.form.get("time")
+        if time_input:
+            # Convert HH:MM to a full datetime for today
+            from datetime import datetime, date
+            today = date.today()
+            recorded_at = f"{today} {time_input}:00"
+        else:
+            # Fallback to current time if no time provided
+            recorded_at = None
+
         # helper to parse 0–10 ints
         def as_int(name, default=0):
             val = request.form.get(name)
@@ -714,19 +725,28 @@ def log_physical_state():
         nausea = as_int("nausea", 0)
         notes = request.form.get("notes") or None
 
-        cur.execute(
-            """
-            INSERT INTO feelings (meal_id, user_id, mood, energy, bloating, nausea, notes)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """,
-            (meal_id, user_id, mood, energy, bloating, nausea, notes),
-        )
+        if recorded_at:
+            cur.execute(
+                """
+                INSERT INTO feelings (meal_id, user_id, recorded_at, mood, energy, bloating, nausea, notes)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (meal_id, user_id, recorded_at, mood, energy, bloating, nausea, notes),
+            )
+        else:
+            cur.execute(
+                """
+                INSERT INTO feelings (meal_id, user_id, recorded_at, mood, energy, bloating, nausea, notes)
+                VALUES (?, ?, datetime('now', 'localtime'), ?, ?, ?, ?, ?)
+                """,
+                (meal_id, user_id, mood, energy, bloating, nausea, notes),
+            )
+        
         conn.commit()
         conn.close()
 
         flash("Thanks! We saved how you felt after this meal.", "success")
-        return redirect(url_for("log_physical_state"))
-
+        return redirect(url_for("log_physical_state")) 
     # GET: show the form with the user's recent meals to choose from
     meals = cur.execute(
         "SELECT id, title, eaten_at FROM meals WHERE user_id = ? ORDER BY eaten_at DESC LIMIT 10",
