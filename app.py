@@ -207,10 +207,10 @@ def log_meal():
                         'id': it['id'],
                         'ingredient_name': it['name'],
                         'quantity': it['quantity_servings'],
-                        'calories': it['kcal'],
-                        'protein': it['protein_g'],
-                        'carbs': it['carbs_g'],
-                        'fat': it['fat_g'],
+                        'calories': f"{float(it['kcal']):.2f}",
+                        'protein': f"{float(it['protein_g']):.2f}",
+                        'carbs': f"{float(it['carbs_g']):.2f}",
+                        'fat': f"{float(it['fat_g']):.2f}",
                     })
                 meals_data.append({
                     'id': m['id'],
@@ -241,10 +241,10 @@ def log_meal():
                     (user_id, selected_date)
                 ).fetchone()
                 if r:
-                    totals['kcal'] = r['kcal'] or 0
-                    totals['protein'] = r['protein'] or 0
-                    totals['carbs'] = r['carbs'] or 0
-                    totals['fat'] = r['fat'] or 0
+                    totals['kcal'] = float(f"{r['kcal'] or 0:.2f}")
+                    totals['protein'] = float(f"{r['protein'] or 0:.2f}")
+                    totals['carbs'] = float(f"{r['carbs'] or 0:.2f}")
+                    totals['fat'] = float(f"{r['fat'] or 0:.2f}")
             except Exception:
                 pass
         
@@ -317,10 +317,10 @@ def log_meal():
             saved_items.append({
                 'ingredient_name': name,
                 'quantity': q_raw or '',
-                'calories': kcal,
-                'protein': prot,
-                'carbs': carbs,
-                'fat': fat,
+                'calories': f"{kcal:.2f}",
+                'protein': f"{prot:.2f}",
+                'carbs': f"{carbs:.2f}",
+                'fat': f"{fat:.2f}",
             })
         
         conn.commit()
@@ -399,7 +399,15 @@ def autocomplete():
             pass
 
     conn.close()
-    return jsonify(results)
+    # Deduplicate by string representation of each result
+    seen = set()
+    deduped = []
+    for r in results:
+        s = str(r)
+        if s not in seen:
+            seen.add(s)
+            deduped.append(r)
+    return jsonify(deduped)
 
 
 @app.route('/food/usda/<int:fdc_id>')
@@ -435,7 +443,7 @@ def get_food_usda(fdc_id: int):
 
         for k in ('kcal', 'protein_g', 'carbs_g', 'fat_g'):
             try:
-                mapped[k] = float(mapped.get(k, 0) or 0)
+                mapped[k] = float(f"{float(mapped.get(k, 0) or 0):.2f}")
             except Exception:
                 mapped[k] = 0.0
 
@@ -465,7 +473,7 @@ def get_food(food_id):
     d = dict(row)
     for k in ('kcal', 'protein_g', 'carbs_g', 'fat_g'):
         try:
-            d[k] = float(d.get(k, 0) or 0)
+            d[k] = float(f"{float(d.get(k, 0) or 0):.2f}")
         except Exception:
             d[k] = 0.0
     return jsonify(d)
@@ -854,7 +862,7 @@ def update_meal(meal_id):
                     q = 1.0
             
             cur.execute("INSERT INTO meal_items (meal_id, food_id, quantity_servings) VALUES (?, ?, ?)", (meal_id, food_id, q))
-            saved_items.append({'ingredient_name': name, 'quantity': q_raw or '', 'calories': kcal, 'protein': prot, 'carbs': carbs, 'fat': fat})
+            saved_items.append({'ingredient_name': name, 'quantity': q_raw or '', 'calories': f"{kcal:.2f}", 'protein': f"{prot:.2f}", 'carbs': f"{carbs:.2f}", 'fat': f"{fat:.2f}"})
         
         conn.commit()
         
@@ -869,6 +877,9 @@ def update_meal(meal_id):
             meal_totals['protein'] += (float(it.get('protein') or 0.0)) * qnum
             meal_totals['carbs'] += (float(it.get('carbs') or 0.0)) * qnum
             meal_totals['fat'] += (float(it.get('fat') or 0.0)) * qnum
+        # Format totals to two decimal places
+        for k in meal_totals:
+            meal_totals[k] = float(f"{meal_totals[k]:.2f}")
         
         return jsonify(success=True, meal={'id': meal_id, 'meal_type': meal_type, 'meal_date': meal_date, 'items': saved_items, 'totals': meal_totals})
     except Exception as e:
@@ -1103,4 +1114,4 @@ def api_clear_all_feelings():
     return jsonify(success=True)
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5002)
