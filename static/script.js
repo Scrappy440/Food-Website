@@ -215,138 +215,36 @@ document.addEventListener('DOMContentLoaded', function() {
 // Only run if we're on the physical state page
 if (document.getElementById('feelingForm')) {
     let entries = [];
-    let selectedFeelings = [];
 
     const feelingForm = document.getElementById('feelingForm');
-    const timeInput = document.getElementById('time-input');
-    const selectedFeelingsContainer = document.getElementById('selectedFeelings');
-    const feelingOptions = document.querySelectorAll('.feeling-option');
     const entriesGrid = document.getElementById('entriesGrid');
     const emptyState = document.getElementById('emptyState');
     const entryCount = document.getElementById('entryCount');
     const clearAllBtn = document.getElementById('clearAllBtn');
 
-    // Initialize
-    loadEntriesFromStorage();
-    updateDisplay();
-    loadDraft();
-
-    // Handle feeling option clicks
-    feelingOptions.forEach(option => {
-        option.addEventListener('click', () => {
-            const feeling = option.dataset.feeling;
+    // Load entries from server
+    async function loadEntriesFromServer() {
+        try {
+            const response = await fetch('/api/get_feelings_today');
+            const data = await response.json();
             
-            if (selectedFeelings.includes(feeling)) {
-                selectedFeelings = selectedFeelings.filter(f => f !== feeling);
-                option.classList.remove('selected');
-            } else {
-                selectedFeelings.push(feeling);
-                option.classList.add('selected');
+            if (data.success) {
+                entries = data.entries.map(e => ({
+                    id: e.id,
+                    time: new Date(e.time).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                    displayTime: new Date(e.time).toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' }),
+                    mood: e.mood ?? 0,
+                    energy: e.energy ?? 0,
+                    bloating: e.bloating ?? 0,
+                    nausea: e.nausea ?? 0,
+                    meal_title: e.meal_title,
+                    timestamp: e.time
+                }));
+                updateDisplay();
             }
-            
-            updateSelectedFeelingsDisplay();
-            saveDraft();
-        });
-    });
-
-    // Update selected feelings display
-    function updateSelectedFeelingsDisplay() {
-        selectedFeelingsContainer.innerHTML = '';
-        
-        if (selectedFeelings.length === 0) {
-            const emptyMsg = document.createElement('span');
-            emptyMsg.className = 'empty-message';
-            emptyMsg.textContent = 'Click feelings below to add them';
-            selectedFeelingsContainer.appendChild(emptyMsg);
-            selectedFeelingsContainer.classList.remove('has-selections');
-        } else {
-            selectedFeelingsContainer.classList.add('has-selections');
-            
-            selectedFeelings.forEach(feeling => {
-                const bubble = document.createElement('div');
-                bubble.className = 'selected-feeling-bubble';
-                bubble.innerHTML = `
-                    <span>${feeling}</span>
-                    <button type="button" class="remove-feeling" data-feeling="${feeling}">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-                
-                bubble.querySelector('.remove-feeling').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    removeFeeling(feeling);
-                });
-                
-                selectedFeelingsContainer.appendChild(bubble);
-            });
+        } catch (error) {
+            console.error('Error loading entries:', error);
         }
-    }
-
-    // Remove feeling
-    function removeFeeling(feeling) {
-        selectedFeelings = selectedFeelings.filter(f => f !== feeling);
-        
-        feelingOptions.forEach(option => {
-            if (option.dataset.feeling === feeling) {
-                option.classList.remove('selected');
-            }
-        });
-        
-        updateSelectedFeelingsDisplay();
-        saveDraft();
-    }
-
-    // Form submission
-    feelingForm.addEventListener('submit', (e) => {
-        const time = timeInput.value;
-
-        if (!time) {
-            showAlert('Please select a time', 'error');
-            e.preventDefault();
-            return;
-        }
-
-        if (selectedFeelings.length === 0) {
-            showAlert('Please select at least one feeling', 'error');
-            e.preventDefault();
-            return;
-        }
-
-        const displayTime = formatTimeTo12Hour(time);
-
-        const entry = {
-            id: Date.now(),
-            time: time,
-            displayTime: displayTime,
-            feelings: [...selectedFeelings],
-            timestamp: new Date().toISOString()
-        };
-
-        entries.push(entry);
-        sortEntriesByTime();
-        saveEntriesToStorage();
-        updateDisplay();
-        showSuccessMessage();
-
-        // let the form actually POST to Flask after we update local UI
-        // (no e.preventDefault here once validation passes)
-
-        localStorage.removeItem('feelingDraft');
-    });
-
-    // Format time to 12-hour
-    function formatTimeTo12Hour(time24) {
-        const [hours24, minutes] = time24.split(':');
-        let hours = parseInt(hours24);
-        const ampm = hours >= 12 ? 'PM' : 'AM';
-        hours = hours % 12;
-        hours = hours ? hours : 12;
-        return `${hours}:${minutes} ${ampm}`;
-    }
-
-    // Sort entries
-    function sortEntriesByTime() {
-        entries.sort((a, b) => a.time.localeCompare(b.time));
     }
 
     // Update display
@@ -381,18 +279,17 @@ if (document.getElementById('feelingForm')) {
         timeDiv.className = 'entry-time';
         timeDiv.innerHTML = `
             <span class="time">${entry.displayTime}</span>
-            <span class="label">Time</span>
+            <span class="label">${entry.meal_title || 'Meal'}</span>
         `;
 
         const feelingDiv = document.createElement('div');
         feelingDiv.className = 'entry-feeling';
-
-        entry.feelings.forEach(feeling => {
-            const feelingBadge = document.createElement('div');
-            feelingBadge.className = 'feeling-badge';
-            feelingBadge.innerHTML = `${feeling}`;
-            feelingDiv.appendChild(feelingBadge);
-        });
+        feelingDiv.innerHTML = `
+            <span class="feeling-badge">Mood: ${entry.mood}</span>
+            <span class="feeling-badge">Energy: ${entry.energy}</span>
+            <span class="feeling-badge">Bloating: ${entry.bloating}</span>
+            <span class="feeling-badge">Nausea: ${entry.nausea}</span>
+        `;
 
         content.appendChild(timeDiv);
         content.appendChild(feelingDiv);
@@ -413,53 +310,69 @@ if (document.getElementById('feelingForm')) {
     }
 
     // Delete entry
-    function deleteEntry(id) {
+    async function deleteEntry(id) {
         if (confirm('Delete this entry?')) {
-            entries = entries.filter(entry => entry.id !== id);
-            saveEntriesToStorage();
-            updateDisplay();
-            showAlert('Entry deleted successfully', 'success');
+            try {
+                const response = await fetch(`/api/delete_feeling/${id}`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadEntriesFromServer();
+                    showAlert('Entry deleted successfully', 'success');
+                }
+            } catch (error) {
+                console.error('Error deleting entry:', error);
+                showAlert('Error deleting entry', 'error');
+            }
         }
     }
 
     // Clear all
-    clearAllBtn.addEventListener('click', () => {
+    clearAllBtn.addEventListener('click', async () => {
         if (confirm('Are you sure you want to delete all entries? This cannot be undone.')) {
-            entries = [];
-            saveEntriesToStorage();
-            updateDisplay();
-            showAlert('All entries cleared', 'success');
+            try {
+                const response = await fetch('/api/clear_all_feelings', {
+                    method: 'POST'
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    await loadEntriesFromServer();
+                    showAlert('All entries cleared', 'success');
+                }
+            } catch (error) {
+                console.error('Error clearing entries:', error);
+                showAlert('Error clearing entries', 'error');
+            }
         }
     });
 
-    // Storage functions
-    function saveEntriesToStorage() {
-        localStorage.setItem('feelingEntries', JSON.stringify(entries));
-    }
-
-    function loadEntriesFromStorage() {
-        const stored = localStorage.getItem('feelingEntries');
-        if (stored) {
-            entries = JSON.parse(stored);
-        }
-    }
-
-    // Show success
-    function showSuccessMessage() {
-        const flash = document.createElement('div');
-        flash.className = 'success-flash';
-        flash.innerHTML = `
-            <i class="fas fa-check-circle"></i>
-            <span>Entry added successfully!</span>
-        `;
+    // Form submission
+    feelingForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         
-        document.body.appendChild(flash);
-
-        setTimeout(() => {
-            flash.style.animation = 'slideInRight 0.3s ease-out reverse';
-            setTimeout(() => flash.remove(), 300);
-        }, 2000);
-    }
+        const formData = new FormData(feelingForm);
+        
+        try {
+            const response = await fetch('/log_physical_state', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                feelingForm.reset();
+                await loadEntriesFromServer();
+                showAlert('Entry added successfully!', 'success');
+            } else {
+                showAlert('Error adding entry', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showAlert('Error adding entry', 'error');
+        }
+    });
 
     // Show alert
     function showAlert(message, type) {
@@ -482,57 +395,6 @@ if (document.getElementById('feelingForm')) {
         }, 2000);
     }
 
-    // Set current time
-    function setCurrentTime() {
-        const now = new Date();
-        const hours = String(now.getHours()).padStart(2, '0');
-        const minutes = String(now.getMinutes()).padStart(2, '0');
-        timeInput.value = `${hours}:${minutes}`;
-    }
-
-    // Draft saving
-    let draftTimeout;
-    function saveDraft() {
-        clearTimeout(draftTimeout);
-        draftTimeout = setTimeout(() => {
-            const draft = {
-                time: timeInput.value,
-                feelings: selectedFeelings
-            };
-            localStorage.setItem('feelingDraft', JSON.stringify(draft));
-        }, 500);
-    }
-
-    timeInput.addEventListener('input', saveDraft);
-
-    // Load draft
-    function loadDraft() {
-        const draft = localStorage.getItem('feelingDraft');
-        if (draft) {
-            const { time, feelings } = JSON.parse(draft);
-            if (time) timeInput.value = time;
-            if (feelings && Array.isArray(feelings)) {
-                selectedFeelings = feelings;
-                
-                feelingOptions.forEach(option => {
-                    if (feelings.includes(option.dataset.feeling)) {
-                        option.classList.add('selected');
-                    }
-                });
-                
-                updateSelectedFeelingsDisplay();
-            }
-        } else {
-            setCurrentTime();
-        }
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            if (document.activeElement.tagName !== 'TEXTAREA') {
-                feelingForm.requestSubmit();
-            }
-        }
-    });
+    // Load entries on page load
+    loadEntriesFromServer();
 }

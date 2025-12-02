@@ -58,7 +58,6 @@
                         <!-- Which meal is this about? -->
                         <div class="form-group">
                             <label for="meal_id">
-                                <i class="fas fa-bowl-food"></i>
                                 Meal this feeling is for
                             </label>
                             <select id="meal_id" name="meal_id" required>
@@ -76,104 +75,45 @@
                     </div>
 
                     <div class="form-row">
-                        <div class="form-group selected-feelings-group">
-                            <label>
-                                <i class="fas fa-heart"></i>
-                                Selected Feelings
-                            </label>
-                            <div class="selected-feelings-container" id="selectedFeelings">
-                                <span class="empty-message">Click feelings below to add them</span>
-                            </div>
                         </div>
                     </div>
 
-                    <!-- Existing clickable feelings UI -->
-                    <div class="feelings-selection-area">
-                        <label class="section-label">
-                            <i class="fas fa-hand-pointer"></i>
-                            Choose How You Feel (Click to add)
-                        </label>
-                        
-                        <div class="feeling-category">
-                            <h4>Energy</h4>
-                            <div class="feeling-options">
-                                <button type="button" class="feeling-option" data-feeling="Energized">Energized</button>
-                                <button type="button" class="feeling-option" data-feeling="Alert">Alert</button>
-                                <button type="button" class="feeling-option" data-feeling="Normal Energy">Normal Energy</button>
-                                <button type="button" class="feeling-option" data-feeling="Tired">Tired</button>
-                                <button type="button" class="feeling-option" data-feeling="Exhausted">Exhausted</button>
-                            </div>
-                        </div>
-
-                        <div class="feeling-category">
-                            <h4>Digestion</h4>
-                            <div class="feeling-options">
-                                <button type="button" class="feeling-option" data-feeling="Comfortable">Comfortable</button>
-                                <button type="button" class="feeling-option" data-feeling="Bloated">Bloated</button>
-                                <button type="button" class="feeling-option" data-feeling="Gassy">Gassy</button>
-                                <button type="button" class="feeling-option" data-feeling="Nauseous">Nauseous</button>
-                                <button type="button" class="feeling-option" data-feeling="Stomach Ache">Stomach Ache</button>
-                                <button type="button" class="feeling-option" data-feeling="Heartburn">Heartburn</button>
-                                <button type="button" class="feeling-option" data-feeling="Cramping">Cramping</button>
-                            </div>
-                        </div>
-
-                        <div class="feeling-category">
-                            <h4>Mood</h4>
-                            <div class="feeling-options">
-                                <button type="button" class="feeling-option" data-feeling="Happy">Happy</button>
-                                <button type="button" class="feeling-option" data-feeling="Calm">Calm</button>
-                                <button type="button" class="feeling-option" data-feeling="Focused">Focused</button>
-                                <button type="button" class="feeling-option" data-feeling="Anxious">Anxious</button>
-                                <button type="button" class="feeling-option" data-feeling="Irritable">Irritable</button>
-                                <button type="button" class="feeling-option" data-feeling="Stressed">Stressed</button>
-                                <button type="button" class="feeling-option" data-feeling="Depressed">Depressed</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- NEW: numeric ratings that power the analysis engine -->
-                    <div class="form-row">
+                    <!-- numeric ratings that power the analysis engine -->
+                     <div class="feeling-sliders-area">
+                        <span class="sliders-title">Rate the following from 0 (low) to 10 (high):</span>                    <div class="form-row">
                         <div class="form-group">
                             <label for="mood-input">
                                 Mood (0–10)
                             </label>
-                            <input type="number" id="mood-input" name="mood" min="0" max="10" value="5" required>
+                            <input type="range" id="mood-input" name="mood" min="0" max="10" value="5" required oninput="this.nextElementSibling.value = this.value">
+                            <output>5</output>
                         </div>
 
                         <div class="form-group">
                             <label for="energy-input">
                                 Energy (0–10)
                             </label>
-                            <input type="number" id="energy-input" name="energy" min="0" max="10" value="5" required>
+                            <input type="range" id="energy-input" name="energy" min="0" max="10" value="5" required oninput="this.nextElementSibling.value = this.value">
+                            <output>5</output>
                         </div>
 
                         <div class="form-group">
                             <label for="bloating-input">
                                 Bloating (0–10)
                             </label>
-                            <input type="number" id="bloating-input" name="bloating" min="0" max="10" value="0" required>
+                            <input type="range" id="bloating-input" name="bloating" min="0" max="10" value="0" required oninput="this.nextElementSibling.value = this.value">
+                            <output>0</output>
                         </div>
 
                         <div class="form-group">
                             <label for="nausea-input">
                                 Nausea (0–10)
                             </label>
-                            <input type="number" id="nausea-input" name="nausea" min="0" max="10" value="0" required>
+                            <input type="range" id="nausea-input" name="nausea" min="0" max="10" value="0" required oninput="this.nextElementSibling.value = this.value">
+                            <output>0</output>
                         </div>
                     </div>
 
-                    <!-- Notes (can store the feeling tags summary if you want later) -->
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="notes">
-                                <i class="fas fa-comment"></i>
-                                Notes (optional)
-                            </label>
-                            <textarea id="notes" name="notes" rows="3"
-                                      placeholder="Anything else about how you feel?"></textarea>
-                        </div>
-                    </div>
 
                     <button type="submit" class="add-entry-btn">
                         <i class="fas fa-plus-circle"></i>
@@ -181,6 +121,7 @@
                     </button>
                 </form>
             </div>
+            
 
             <!-- Entries Display -->
             <div class="entries-section">
@@ -205,6 +146,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </main>
 

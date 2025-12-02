@@ -725,7 +725,7 @@ def log_physical_state():
         conn.close()
 
         flash("Thanks! We saved how you felt after this meal.", "success")
-        return redirect(url_for("meal_analysis"))
+        return redirect(url_for("log_physical_state"))
 
     # GET: show the form with the user's recent meals to choose from
     meals = cur.execute(
@@ -980,6 +980,107 @@ def api_log_feelings():
         conn.close()
         return jsonify(success=False, error=str(e)), 500
 
+
+@app.route("/api/get_feelings_today", methods=["GET"])
+def api_get_feelings_today():
+    """Get today's physical state entries for the current user"""
+    if "user" not in session:
+        return jsonify(success=False, error="Not authenticated"), 401
+    
+    conn = get_db()
+    cur = conn.cursor()
+    
+    user_email = session.get("user")
+    user_row = cur.execute("SELECT id FROM users WHERE email = ?", (user_email,)).fetchone()
+    
+    if not user_row:
+        conn.close()
+        return jsonify(success=False, error="User not found"), 400
+    
+    user_id = user_row["id"]
+    
+    # Get today's entries
+    entries = cur.execute(
+        """
+        SELECT f.id, f.recorded_at, f.mood, f.energy, f.bloating, f.nausea, 
+               m.title as meal_title
+        FROM feelings f
+        JOIN meals m ON m.id = f.meal_id
+        WHERE f.user_id = ? 
+        AND date(f.recorded_at) = date('now', 'localtime')
+        ORDER BY f.recorded_at DESC
+        """,
+        (user_id,)
+    ).fetchall()
+    
+    conn.close()
+    
+    entries_list = []
+    for e in entries:
+        entries_list.append({
+            'id': e['id'],
+            'time': e['recorded_at'],
+            'mood': e['mood'],
+            'energy': e['energy'],
+            'bloating': e['bloating'],
+            'nausea': e['nausea'],
+            'meal_title': e['meal_title']
+        })
+    
+    return jsonify(success=True, entries=entries_list)
+
+@app.route("/api/delete_feeling/<int:feeling_id>", methods=["POST"])
+def api_delete_feeling(feeling_id):
+    """Delete a specific feeling entry"""
+    if "user" not in session:
+        return jsonify(success=False, error="Not authenticated"), 401
+    
+    conn = get_db()
+    cur = conn.cursor()
+    
+    user_email = session.get("user")
+    user_row = cur.execute("SELECT id FROM users WHERE email = ?", (user_email,)).fetchone()
+    
+    if not user_row:
+        conn.close()
+        return jsonify(success=False, error="User not found"), 400
+    
+    user_id = user_row["id"]
+    
+    # Delete the feeling entry
+    cur.execute("DELETE FROM feelings WHERE id = ? AND user_id = ?", (feeling_id, user_id))
+    conn.commit()
+    conn.close()
+    
+    return jsonify(success=True)
+
+@app.route("/api/clear_all_feelings", methods=["POST"])
+def api_clear_all_feelings():
+    """Clear all today's feeling entries"""
+    if "user" not in session:
+        return jsonify(success=False, error="Not authenticated"), 401
+    
+    conn = get_db()
+    cur = conn.cursor()
+    
+    user_email = session.get("user")
+    user_row = cur.execute("SELECT id FROM users WHERE email = ?", (user_email,)).fetchone()
+    
+    if not user_row:
+        conn.close()
+        return jsonify(success=False, error="User not found"), 400
+    
+    user_id = user_row["id"]
+    
+    # Delete all today's entries
+    cur.execute(
+        "DELETE FROM feelings WHERE user_id = ? AND date(recorded_at) = date('now', 'localtime')",
+        (user_id,)
+    )
+    conn.commit()
+    conn.close()
+    
+    return jsonify(success=True)
 
 if __name__ == "__main__":
     app.run(debug=True, port=5001)

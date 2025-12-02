@@ -1480,6 +1480,30 @@ html {
     margin: 0;
 }
 
+/* Meal Selection Dropdown */
+#meal_id {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid #e8e8e8;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background-color: white;
+    cursor: pointer;
+    font-family: var(--font-family);
+    color: var(--dark-text);
+}
+
+#meal_id:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(95, 173, 86, 0.1);
+}
+
+#meal_id:hover {
+    border-color: #d0d0d0;
+}
+
 /* Form Row */
 .feeling-form .form-row {
     display: grid;
@@ -1523,121 +1547,66 @@ html {
     box-shadow: 0 0 0 3px rgba(95, 173, 86, 0.1);
 }
 
-/* Selected Feelings Container */
-.selected-feelings-container {
-    min-height: 60px;
-    padding: 1rem;
-    background: #f8f9fa;
-    border: 2px dashed #d0d0d0;
-    border-radius: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    align-items: center;
-    transition: all 0.3s ease;
-}
-
-.selected-feelings-container.has-selections {
-    border-style: solid;
-    border-color: var(--accent-color);
-    background: rgba(95, 173, 86, 0.05);
-}
-
-.empty-message {
-    color: var(--medium-text);
-    font-style: italic;
-    font-size: 0.9rem;
-}
-
-.selected-feeling-bubble {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    background: var(--secondary-color);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.selected-feeling-bubble .remove-feeling {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: white;
-    transition: background 0.2s;
-}
-
-.selected-feeling-bubble .remove-feeling:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-/* Feelings Selection Area */
-.feelings-selection-area {
+/* Feelings slider Area */
+.feeling-sliders-area {
+    background-color: var(--white);
+     border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
     margin-bottom: 2rem;
+    padding-bottom: 10px;
 }
-
-.section-label {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--dark-text);
+.sliders-title {
+    display: block;
+    font-size: 1.2rem;
     font-weight: 600;
-    margin-bottom: 1.5rem;
-    font-size: 1.05rem;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #e8e8e8;
 }
-
-.section-label i {
-    color: var(--primary-color);
-}
-
-.feeling-category {
-    margin-bottom: 1.5rem;
-}
-
-.feeling-category h4 {
-    color: var(--dark-text);
-    font-size: 1.1rem;
-    margin-bottom: 0.75rem;
-    font-weight: 600;
-}
-
-.feeling-options {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-}
-
-.feeling-option {
-    padding: 0.6rem 1.2rem;
-    background: #f8f9fa;
-    border: 2px solid #e8e8e8;
-    border-radius: 25px;
-    color: var(--dark-text);
-    font-size: 0.95rem;
+.form-row ~ span {
+    display: block;
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 20px;
     font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
 }
 
-.feeling-option:hover {
-    background: #e9ecef;
-    border-color: var(--secondary-color);
+/* Slider Styling */
+input[type="range"] {
+    width: 100%;
+    height: 16px;
+    border-radius: 5px;
+    background: #e8e8e8;
+    outline: none;
+    -webkit-appearance: none;
 }
-
-.feeling-option.selected {
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
     background: var(--secondary-color);
-    border-color: var(--secondary-color);
-    color: white;
+    cursor: pointer;
 }
 
+input[type="range"]::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--accent-color);
+    cursor: pointer;
+    border: none;
+}
+
+output {
+    display: inline-block;
+    margin-left: 10px;
+    font-weight: bold;
+    color: var(--black);
+}
 /* Add Entry Button */
 .add-entry-btn {
     width: 100%;
@@ -1660,12 +1629,20 @@ html {
     transform: translateY(-2px);
 }
 
+.add-entry-btn i {
+    font-size: 1.1rem;
+    color: white;
+}
+
 /* Entries Section */
 .entries-section {
-    background: white;
-    border-radius: 15px;
+     background-color: var(--white);
+     border-radius: 15px;
     padding: 2rem;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    margin: 0 auto 2rem auto;
+     max-width: 1200px;
+    padding-bottom: 10px;
 }
 
 .entries-header {
