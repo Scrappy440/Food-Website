@@ -64,7 +64,7 @@
                                 {% if meals %}
                                     {% for m in meals %}
                                         <option value="{{ m.id }}">
-                                            {{ m.title or "Meal" }} – {{ m.eaten_at }}
+                                            {{ m.title or "Meal" }} - {{ m.eaten_at }} - {{ m.ingredient }}
                                         </option>
                                     {% endfor %}
                                 {% else %}
