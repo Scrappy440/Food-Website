@@ -756,18 +756,14 @@ def log_physical_state():
         flash("Thanks! We saved how you felt after this meal.", "success")
         return redirect(url_for("log_physical_state")) 
     # GET: show the form with the user's recent meals to choose from
-    # Get meals with their first ingredient
+    # Get meals with all their ingredients
     meals_raw = cur.execute(
         """
         SELECT 
             m.id, 
             m.title, 
-            date(m.eaten_at) as eaten_date,
-            (SELECT f.name 
-            FROM meal_items mi 
-            JOIN foods f ON f.id = mi.food_id 
-            WHERE mi.meal_id = m.id 
-            LIMIT 1) as first_ingredient
+            m.eaten_at,
+            date(m.eaten_at) as eaten_date
         FROM meals m
         WHERE m.user_id = ?
         ORDER BY m.eaten_at DESC
@@ -776,17 +772,29 @@ def log_physical_state():
         (user_id,)
     ).fetchall()
 
-    # Format the meals for display
+    # Format the meals for display with all ingredients
     meals = []
     for m in meals_raw:
-        ingredient = m['first_ingredient'] or 'No ingredients'
+        # Get all ingredients for this meal
+        ingredients = cur.execute(
+            """
+            SELECT f.name 
+            FROM meal_items mi 
+            JOIN foods f ON f.id = mi.food_id 
+            WHERE mi.meal_id = ?
+            ORDER BY f.name
+            """,
+            (m['id'],)
+        ).fetchall()
+        
+        ingredient_list = [ing['name'] for ing in ingredients] if ingredients else ['No ingredients']
+        ingredients_str = ', '.join(ingredient_list)
         
         meals.append({
             'id': m['id'],
             'title': m['title'],
             'eaten_at': m['eaten_date'],
-            'ingredient': ingredient,
-            'display': f"{m['eaten_date']} - {ingredient}"
+            'ingredients': ingredients_str
         })
 
     conn.close()
