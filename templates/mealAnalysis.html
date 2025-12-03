@@ -41,6 +41,7 @@
                                 <li class="food-list-item">
                                     <div class="food-main-line">
                                         <span class="food-name">{{ row.name }}</span>
+                                        <span class="score-label">Meal Score:</span>
                                         <span class="food-score">
                                             {{ "%.1f"|format(row.personalized_score) }}
                                         </span>
@@ -76,6 +77,7 @@
                                 <li class="food-list-item">
                                     <div class="food-main-line">
                                         <span class="food-name">{{ row.name }}</span>
+                                        <span class="score-label">Meal Score:</span>
                                         <span class="food-score bad">
                                             {{ "%.1f"|format(row.personalized_score) }}
                                         </span>
@@ -98,7 +100,77 @@
                 </div>
             </div>
         </div>
-
+    <!-- Score Explanation Section -->
+    <div class="score-explanation-section">
+        <div class="explanation-header">
+            <h2><i class="fas fa-chart-line"></i> Understanding Your Meal Scores</h2>
+        </div>
+        
+        <div class="explanation-content">
+            <p class="explanation-intro">
+                We analyze each meal by combining nutritional data with how you felt afterwards. 
+                Here's how the scoring works:
+            </p>
+            
+            <div class="score-factors">
+                <div class="factor-group positive">
+                    <h3><i class="fas fa-plus-circle"></i> Positive Factors</h3>
+                    <ul>
+                        <li><strong>Fiber:</strong> Each gram adds +1.0 points (up to 10g)</li>
+                        <li><strong>Protein:</strong> Each gram adds +0.8 points (up to 20g)</li>
+                        <li><strong>Energy Level:</strong> Your rating × 2.0 points</li>
+                        <li><strong>Mood:</strong> Your rating × 2.0 points</li>
+                    </ul>
+                </div>
+                
+                <div class="factor-group negative">
+                    <h3><i class="fas fa-minus-circle"></i> Negative Factors</h3>
+                    <ul>
+                        <li><strong>Sugar:</strong> Each gram subtracts -1.2 points (up to 20g)</li>
+                        <li><strong>Fat:</strong> Each gram subtracts -0.5 points (up to 40g)</li>
+                        <li><strong>Calories:</strong> Each calorie subtracts -0.04 points (up to 500)</li>
+                        <li><strong>Bloating:</strong> Your rating × -3.0 points</li>
+                        <li><strong>Nausea:</strong> Your rating × -2.0 points</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="score-ranges">
+                <h3><i class="fas fa-tachometer-alt"></i> Score Ranges</h3>
+                <div class="range-indicators">
+                    <div class="range-item excellent">
+                        <span class="range-label">Excellent</span>
+                        <span class="range-value">> +10</span>
+                    </div>
+                    <div class="range-item good">
+                        <span class="range-label">Good</span>
+                        <span class="range-value">+5 to +10</span>
+                    </div>
+                    <div class="range-item neutral">
+                        <span class="range-label">Neutral</span>
+                        <span class="range-value">-5 to +5</span>
+                    </div>
+                    <div class="range-item poor">
+                        <span class="range-label">Poor</span>
+                        <span class="range-value">-10 to -5</span>
+                    </div>
+                    <div class="range-item bad">
+                        <span class="range-label">Avoid</span>
+                        <span class="range-value">< -10</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="explanation-note">
+                <i class="fas fa-info-circle"></i>
+                <p>
+                    <strong>How to use this:</strong> Foods appearing in high-scoring meals are marked as "GOOD" 
+                    and those in low-scoring meals are marked as "BAD". The more data you log, the more 
+                    personalized and accurate your recommendations become!
+                </p>
+            </div>
+        </div>
+    </div>
         <!-- Medical Resources Section -->
         <div class="resources-section">
             <div class="section-header">
