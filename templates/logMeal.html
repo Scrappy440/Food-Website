@@ -75,19 +75,19 @@
                                 </div>
                                 <div class="nutrition-input-group">
                                     <label>Calories</label>
-                                    <input type="number" name="calories[]" placeholder="0" min="0" onchange="updateTotals()">
+                                    <input type="number" name="calories[]" placeholder="0" min="0" step="any" onchange="updateTotals()">
                                 </div>
                                 <div class="nutrition-input-group">
                                     <label>Protein (g)</label>
-                                    <input type="number" name="protein[]" placeholder="0" min="0" step="0.1" onchange="updateTotals()">
+                                    <input type="number" name="protein[]" placeholder="0" min="0" step="any" onchange="updateTotals()">
                                 </div>
                                 <div class="nutrition-input-group">
                                     <label>Carbs (g)</label>
-                                    <input type="number" name="carbs[]" placeholder="0" min="0" step="0.1" onchange="updateTotals()">
+                                    <input type="number" name="carbs[]" placeholder="0" min="0" step="any" onchange="updateTotals()">
                                 </div>
                                 <div class="nutrition-input-group">
                                     <label>Fat (g)</label>
-                                    <input type="number" name="fat[]" placeholder="0" min="0" step="0.1" onchange="updateTotals()">
+                                    <input type="number" name="fat[]" placeholder="0" min="0" step="any" onchange="updateTotals()">
                                 </div>
                             </div>
                         </div>
@@ -257,60 +257,7 @@
 
 <!--Autosuggest Didnt work, needs new script maybe 11/9-->
 <!-- I hate Javascript -Y  -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const searchInput = document.getElementById("food-search");
-        const resultsDiv = document.getElementById("autocomplete-results");
-        async function searchFoods(query) {
-        const res = await fetch(`/autocomplete?query=${encodeURIComponent(query)}`);
-        return res.json();
-    }
-
-    //Decision: Starts auto after 2 chars
-    searchInput.addEventListener("input", async () => {
-        const query = searchInput.value.trim();
-        resultsDiv.innerHTML = "";
-        if (query.length < 2) return;
-
-        const foods = await searchFoods(query);
-        foods.forEach(f => {
-            const div = document.createElement("div");
-            div.className = "suggestion";
-            div.textContent = f.brand ? `${f.name} (${f.brand})` : f.name;
-            div.onclick = async () => {
-                // Fill the top search box with chosen name (NOT working only suggests under)
-                searchInput.value = f.name;
-                resultsDiv.innerHTML = "";
-
-                const data = await getFoodDetails(f.id);
-                if (data.error) return alert("Food not found.");
-
-                // Autofill button
-                const firstFood = document.querySelector(".food-item");
-                if (firstFood) {
-                    firstFood.querySelector(".food-name-input").value = data.name;
-                    firstFood.querySelector("input[name='quantity[]']").value =
-                        data.serving_size_g ? `${data.serving_size_g} g` : "";
-                    firstFood.querySelector("input[name='calories[]']").value = data.kcal ?? 0;
-                    //firstFood.querySelector("input[name='calories[]']").value = data.cal ?? 0;
-                    firstFood.querySelector("input[name='protein[]']").value = data.protein_g ?? 0;
-                    firstFood.querySelector("input[name='carbs[]']").value = data.carbs_g ?? 0;
-                    firstFood.querySelector("input[name='fat[]']").value = data.fat_g ?? 0;
-                    updateTotals();
-                }
-            };
-            resultsDiv.appendChild(div);
-        });
-    });
-
-    // Hide autocomplete when not cliked on
-    document.addEventListener("click", e => {
-        if (!resultsDiv.contains(e.target) && e.target !== searchInput) {
-            resultsDiv.innerHTML = "";
-        }
-    });
-});
-</script>
+<!-- Removed duplicate inline autocomplete script. Autocomplete logic is now handled only in static/script.js. -->
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   // set today's date into hidden input
